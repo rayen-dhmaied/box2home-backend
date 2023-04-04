@@ -6,11 +6,11 @@ import { Public } from './decorator/public.decorator';
 @Controller('auth')
 @Public()
 export class AuthController {
-    constructor(private AuthService: AuthService) {}
+    constructor(private authService: AuthService) {}
 
     @Post('login')
     @UseGuards(LocalAuthGuard)
     login(@Req() req : any){
-        return this.AuthService.login(req.user);
+        return this.authService.login(req.user);
     }
 }

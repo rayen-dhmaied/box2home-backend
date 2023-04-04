@@ -7,14 +7,2747 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Collaborator {
-  id        Int      @id @default(autoincrement())
-  firstName String
-  lastName  String
-  email     String   @unique
-  password  String
-  role      String   @default("")
-  admin     Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model CourseMetadata {
+  id                                              Int                          @id @default(autoincrement())
+  coursemetadata_id                               Int?                         @unique(map: "UNIQ_78DCA0B603757A2")
+  fournier_id                                     String                       @db.VarChar(13)
+  last_msg_id                                     String                       @db.VarChar(2)
+  last_msg_ack                                    String                       @db.VarChar(13)
+  reception_date                                  DateTime?                    @db.DateTime(0)
+  truck_reference                                 String                       @db.VarChar(255)
+  truck_position                                  String                       @db.VarChar(255)
+  created_at                                      DateTime?                    @db.DateTime(0)
+  updated_at                                      DateTime?                    @db.DateTime(0)
+  deleted_at                                      DateTime?                    @db.DateTime(0)
+  date_prise_rdv                                  DateTime?                    @db.DateTime(0)
+  billable                                        Boolean
+  imported_at                                     DateTime?                    @db.DateTime(0)
+  store_code                                      String?                      @db.VarChar(255)
+  contre_marque                                   String?                      @db.VarChar(255)
+  kitchen_installation_date                       String?                      @db.VarChar(255)
+  delivery_week                                   String?                      @db.VarChar(255)
+  earliest_delivery_date                          String?                      @db.VarChar(255)
+  latest_delivery_date                            String?                      @db.VarChar(255)
+  order_balance                                   Float?
+  course_type                                     CourseMetadata_course_type?
+  wmsOrderNumber                                  String?                      @db.VarChar(16)
+  countermark                                     String?                      @db.VarChar(50)
+  category                                        String?                      @db.VarChar(255)
+  edi2                                            DateTime?                    @db.DateTime(0)
+  centiro_lcd_type                                String?                      @db.VarChar(255)
+  centiro_shipment_number                         String?                      @db.VarChar(255)
+  latest_pickup_date                              String?                      @db.VarChar(255)
+  contre_marque_relais                            String?                      @db.VarChar(255)
+  planification_type                              String?                      @db.VarChar(255)
+  kitchen_mark                                    CourseMetadata_kitchen_mark?
+  store_name                                      String?                      @db.VarChar(255)
+  monoprix_payement_method                        String?                      @db.VarChar(254)
+  monoprix_payement_type                          String?                      @db.VarChar(255)
+  centiro_delivery_method                         String?                      @db.VarChar(255)
+  centiro_shipment_type                           String?                      @db.VarChar(255)
+  centiro_delivery_code                           String?                      @db.VarChar(255)
+  course_CourseMetadata_coursemetadata_idTocourse course?                      @relation("CourseMetadata_coursemetadata_idTocourse", fields: [coursemetadata_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_78DCA0B603757A2")
+  course_course_coursemetadata_idToCourseMetadata course?                      @relation("course_coursemetadata_idToCourseMetadata")
+}
+
+model NotificationView {
+  id                        Int                         @id @default(autoincrement())
+  codeName                  String                      @db.VarChar(255)
+  channelCodeName           String                      @db.VarChar(25)
+  domain                    String                      @db.VarChar(255)
+  path                      String                      @db.VarChar(255)
+  viewParams                String                      @db.Text
+  code                      String                      @db.VarChar(254)
+  canal_vente_notifications canal_vente_notifications[]
+}
+
+model admin {
+  id         Int          @id @default(autoincrement())
+  login      String       @db.VarChar(255)
+  password   String       @db.VarChar(255)
+  created_at DateTime     @db.DateTime(0)
+  timezone   String       @default("Europe/Paris") @db.VarChar(255)
+  deleted_at DateTime?    @db.DateTime(0)
+  auth_token auth_token[]
+}
+
+model administ_status_flow {
+  id                          Int                          @id @default(autoincrement())
+  course_id                   Int?
+  code_situ                   Int?
+  code_justi                  Int?
+  collaborateur_id            Int?
+  chauffeur_id                Int?
+  contact_arrivee_id          Int?
+  reason                      String?                      @db.LongText
+  created_at                  DateTime                     @db.DateTime(0)
+  updated_at                  DateTime?                    @db.DateTime(0)
+  contact_arrivee             contact_arrivee?             @relation(fields: [contact_arrivee_id], references: [id], onUpdate: Restrict, map: "FK_4F03B5392D4927D5")
+  course_administratif_status course_administratif_status? @relation(fields: [code_situ], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4F03B539421F7341")
+  course                      course?                      @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_4F03B539591CC992")
+  chauffeur                   chauffeur?                   @relation(fields: [chauffeur_id], references: [id], onUpdate: Restrict, map: "FK_4F03B53985C0B3BE")
+  change_reasons              change_reasons?              @relation(fields: [code_justi], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4F03B5398C9E6214")
+  collaborateur               collaborateur?               @relation(fields: [collaborateur_id], references: [id], onUpdate: Restrict, map: "FK_4F03B539A848E3B1")
+
+  @@index([course_id], map: "FK_4F03B539591CC992")
+  @@index([contact_arrivee_id], map: "IDX_4F03B5392D4927D5")
+  @@index([code_situ], map: "IDX_4F03B539421F7341")
+  @@index([chauffeur_id], map: "IDX_4F03B53985C0B3BE")
+  @@index([code_justi], map: "IDX_4F03B5398C9E6214")
+  @@index([collaborateur_id], map: "IDX_4F03B539A848E3B1")
+}
+
+model adresse_enrichie {
+  id                                                    Int                                @id @default(autoincrement())
+  contact_arrivee_id                                    Int?
+  label                                                 String?                            @db.VarChar(255)
+  address                                               String                             @db.VarChar(255)
+  latitude                                              Float?
+  longitude                                             Float?
+  deleted_at                                            DateTime?                          @db.DateTime(0)
+  postal_code                                           String?                            @db.VarChar(255)
+  canal_vente_id                                        Int?
+  avec_ascenseur                                        Boolean?
+  etage                                                 Int?
+  dg_code                                               String?                            @db.VarChar(255)
+  country_code                                          String?                            @db.VarChar(255)
+  accuracy_level                                        adresse_enrichie_accuracy_level?
+  city                                                  String?                            @db.VarChar(255)
+  zone                                                  String?                            @db.VarChar(255)
+  addressLine1                                          String?                            @db.VarChar(255)
+  addressLine2                                          String?                            @db.VarChar(255)
+  pl_vl                                                 Boolean?
+  nbr_marche_avant_ascenseur                            Int?
+  contact_arrivee                                       contact_arrivee?                   @relation(fields: [contact_arrivee_id], references: [id], onUpdate: Restrict, map: "FK_72C6E8DE2D4927D5")
+  canal_vente                                           canal_vente?                       @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_72C6E8DEDC8E843A")
+  adresse_favorite                                      adresse_favorite[]
+  chauffeur_chauffeur_adresse_departToadresse_enrichie  chauffeur[]                        @relation("chauffeur_adresse_departToadresse_enrichie")
+  chauffeur_chauffeur_adresse_arriveeToadresse_enrichie chauffeur[]                        @relation("chauffeur_adresse_arriveeToadresse_enrichie")
+  cmdDevis_cmdDevis_adresse_departToadresse_enrichie    cmdDevis[]                         @relation("cmdDevis_adresse_departToadresse_enrichie")
+  cmdDevis_cmdDevis_adresse_arriveeToadresse_enrichie   cmdDevis[]                         @relation("cmdDevis_adresse_arriveeToadresse_enrichie")
+  course_course_adresse_departToadresse_enrichie        course[]                           @relation("course_adresse_departToadresse_enrichie")
+  course_course_adresse_arriveeToadresse_enrichie       course[]                           @relation("course_adresse_arriveeToadresse_enrichie")
+  pickup_address_operational_hours                      pickup_address_operational_hours[]
+  warehouse                                             warehouse?
+
+  @@index([contact_arrivee_id], map: "IDX_72C6E8DE2D4927D5")
+  @@index([canal_vente_id], map: "IDX_72C6E8DEDC8E843A")
+}
+
+model adresse_favorite {
+  id                  Int              @id @default(autoincrement())
+  client_id           Int
+  adresse_enrichie_id Int
+  adresse_name        String?          @db.VarChar(255)
+  firstname           String?          @db.VarChar(255)
+  lastname            String?          @db.VarChar(255)
+  phone               String?          @db.VarChar(255)
+  mail                String?          @db.VarChar(255)
+  nom_societe         String?          @db.VarChar(255)
+  client              client           @relation(fields: [client_id], references: [id], onUpdate: Restrict, map: "FK_8DB1EB319EB6921")
+  adresse_enrichie    adresse_enrichie @relation(fields: [adresse_enrichie_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_8DB1EB35F6C319")
+
+  @@index([client_id], map: "IDX_8DB1EB319EB6921")
+  @@index([adresse_enrichie_id], map: "IDX_8DB1EB35F6C319")
+}
+
+model adresse_suggeree {
+  id          Int       @id @default(autoincrement())
+  adresse     String    @db.VarChar(255)
+  suggere_par String    @db.VarChar(255)
+  is_informed Boolean
+  created_at  DateTime  @db.DateTime(0)
+  deleted_at  DateTime? @db.DateTime(0)
+}
+
+model article {
+  id               Int                @id @default(autoincrement())
+  code             String             @db.VarChar(255)
+  label            String             @db.VarChar(255)
+  created_at       DateTime           @db.DateTime(0)
+  deleted_at       DateTime?          @db.DateTime(0)
+  courses_articles courses_articles[]
+}
+
+model article_family {
+  id                           Int                            @id @default(autoincrement())
+  code                         String                         @db.VarChar(255)
+  label                        String                         @db.VarChar(255)
+  created_at                   DateTime                       @db.DateTime(0)
+  deleted_at                   DateTime?                      @db.DateTime(0)
+  canal_vente_article_families canal_vente_article_families[]
+  courses_article_families     courses_article_families[]
+}
+
+model articles_canal_vente {
+  id             Int          @id @default(autoincrement())
+  canal_vente_id Int?
+  code           String       @unique(map: "UNIQ_4F27A20B77153098") @db.VarChar(255)
+  label          String       @db.VarChar(255)
+  volume         Float
+  deleted_at     DateTime?    @db.DateTime(0)
+  canal_vente    canal_vente? @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4F27A20BDC8E843A")
+
+  @@index([canal_vente_id], map: "IDX_4F27A20BDC8E843A")
+}
+
+model assembler {
+  id                  Int        @id @default(autoincrement())
+  firstname           String     @db.VarChar(255)
+  lastname            String     @db.VarChar(255)
+  email               String     @db.VarChar(255)
+  phone               String     @db.VarChar(255)
+  address             String?    @db.VarChar(255)
+  societe             String?    @db.VarChar(255)
+  trello_assembler_id String     @db.VarChar(255)
+  created_at          DateTime   @db.DateTime(0)
+  updated_at          DateTime?  @db.DateTime(0)
+  deleted_at          DateTime?  @db.DateTime(0)
+  description         String?    @db.VarChar(255)
+  slack_user_id       String?    @db.VarChar(50)
+  slack_channel_id    String?    @db.VarChar(50)
+  status              String?    @db.VarChar(50)
+  region              String?    @db.VarChar(50)
+  documents_status    String?    @db.VarChar(50)
+  assembly            assembly[]
+}
+
+model assembler_category {
+  id             Int      @id @default(autoincrement())
+  code           String   @db.VarChar(255)
+  label          String   @db.VarChar(255)
+  trello_list_id String   @db.VarChar(255)
+  created_at     DateTime @db.DateTime(0)
+}
+
+model assemblies_options {
+  assembly_id        Int
+  option_id          Int
+  quantity           Int
+  canal_vente_option canal_vente_option @relation(fields: [option_id], references: [id], onUpdate: Restrict, map: "FK_B34D356CA7C41D6F")
+  assembly           assembly           @relation(fields: [assembly_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_B34D356CCA2E7D4C")
+
+  @@id([assembly_id, option_id])
+  @@index([option_id], map: "IDX_B34D356CA7C41D6F")
+  @@index([assembly_id], map: "IDX_B34D356CCA2E7D4C")
+}
+
+model assembly {
+  id                          Int                      @id @default(autoincrement())
+  course_id                   Int?
+  client_id                   Int?
+  assembler_id                Int?
+  collaborator_id             Int?
+  canal_vente_id              Int?
+  moyen_paiement_id           Int?
+  code                        String                   @db.VarChar(255)
+  purchase_amount             Float
+  category                    String                   @db.VarChar(255)
+  location                    String                   @db.VarChar(255)
+  client_price                Float
+  assembler_price             Float?
+  observation                 String?                  @db.LongText
+  trello_card_id              String?                  @db.LongText
+  status                      assembly_status?
+  start_at                    DateTime                 @db.DateTime(0)
+  created_at                  DateTime                 @db.DateTime(0)
+  updated_at                  DateTime?                @db.DateTime(0)
+  etat_paiement               assembly_etat_paiement?
+  stripe_source_id            String?                  @db.VarChar(255)
+  stripe_charge_id            String?                  @db.VarChar(255)
+  stripe_invoice_id           String?                  @db.VarChar(255)
+  stripe_invoice_payment_link String?                  @db.VarChar(255)
+  date_facturation            DateTime?                @db.DateTime(0)
+  non_envoi_mail              Boolean?
+  infos_monteur               String?                  @db.LongText
+  asserted_at                 DateTime?                @db.DateTime(0)
+  montage_source              assembly_montage_source?
+  contact_arrivee_id          Int?
+  notification_id             String?                  @db.VarChar(255)
+  motif_annulation            String?                  @db.VarChar(200)
+  facture_url                 String?                  @db.VarChar(255)
+  assemblies_options          assemblies_options[]
+  client                      client?                  @relation(fields: [client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_1A09EF0B19EB6921")
+  contact_arrivee             contact_arrivee?         @relation(fields: [contact_arrivee_id], references: [id], onUpdate: Restrict, map: "FK_1A09EF0B2D4927D5")
+  collaborateur               collaborateur?           @relation(fields: [collaborator_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_1A09EF0B30098C8C")
+  course                      course?                  @relation(fields: [course_id], references: [id], onUpdate: Restrict, map: "FK_1A09EF0B591CC992")
+  assembler                   assembler?               @relation(fields: [assembler_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_1A09EF0B857D8305")
+  type_paiement               type_paiement?           @relation(fields: [moyen_paiement_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_1A09EF0B9C7E259C")
+  canal_vente                 canal_vente?             @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_1A09EF0BDC8E843A")
+  assembly_attachment         assembly_attachment[]
+  sav_ticket                  sav_ticket[]
+
+  @@index([client_id], map: "IDX_1A09EF0B19EB6921")
+  @@index([contact_arrivee_id], map: "IDX_1A09EF0B2D4927D5")
+  @@index([collaborator_id], map: "IDX_1A09EF0B30098C8C")
+  @@index([course_id], map: "IDX_1A09EF0B591CC992")
+  @@index([assembler_id], map: "IDX_1A09EF0B857D8305")
+  @@index([moyen_paiement_id], map: "IDX_1A09EF0B9C7E259C")
+  @@index([canal_vente_id], map: "IDX_1A09EF0BDC8E843A")
+}
+
+model assembly_attachment {
+  id          Int       @id @default(autoincrement())
+  assembly_id Int?
+  url         String    @db.VarChar(255)
+  created_at  DateTime  @db.DateTime(0)
+  updated_at  DateTime? @db.DateTime(0)
+  assembly    assembly? @relation(fields: [assembly_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_BE0463C3CA2E7D4C")
+
+  @@index([assembly_id], map: "IDX_BE0463C3CA2E7D4C")
+}
+
+model auth_token {
+  id                 Int              @id @default(autoincrement())
+  collaborateur_id   Int?
+  chauffeur_id       Int?
+  client_id          Int?
+  admin_id           Int?
+  value              String           @unique(map: "UNIQ_9315F04E1D775834") @db.VarChar(255)
+  created_at         DateTime         @db.DateTime(0)
+  deleted_at         DateTime?        @db.DateTime(0)
+  partenaire_id      Int?
+  contact_arrivee_id Int?
+  contact_depart_id  Int?
+  client             client?          @relation(fields: [client_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_9315F04E19EB6921")
+  contact_arrivee    contact_arrivee? @relation(fields: [contact_arrivee_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_9315F04E2D4927D5")
+  admin              admin?           @relation(fields: [admin_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_9315F04E642B8210")
+  chauffeur          chauffeur?       @relation(fields: [chauffeur_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_9315F04E85C0B3BE")
+  partenaire         partenaire?      @relation(fields: [partenaire_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_9315F04E98DE13AC")
+  collaborateur      collaborateur?   @relation(fields: [collaborateur_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_9315F04EA848E3B1")
+  contact_depart     contact_depart?  @relation(fields: [contact_depart_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_9315F04EC0F3DD30")
+
+  @@index([client_id], map: "IDX_9315F04E19EB6921")
+  @@index([contact_arrivee_id], map: "IDX_9315F04E2D4927D5")
+  @@index([admin_id], map: "IDX_9315F04E642B8210")
+  @@index([chauffeur_id], map: "IDX_9315F04E85C0B3BE")
+  @@index([partenaire_id], map: "IDX_9315F04E98DE13AC")
+  @@index([collaborateur_id], map: "IDX_9315F04EA848E3B1")
+  @@index([contact_depart_id], map: "IDX_9315F04EC0F3DD30")
+}
+
+model avis {
+  id                             Int          @id @default(autoincrement())
+  chauffeur_id                   Int?
+  client_id                      Int?
+  nombre_etoile                  Int
+  commentaire                    String?      @db.LongText
+  created_at                     DateTime     @db.DateTime(0)
+  deleted_at                     DateTime?    @db.DateTime(0)
+  course_id                      Int?
+  source                         avis_source?
+  id_review_product_avis_verifie String?      @db.VarChar(255)
+  commentaire_commande           String?      @db.LongText
+  id_review_site_avis_verifie    String?      @db.VarChar(255)
+  nombre_etoile_commande         Int?
+  nps                            Int?
+  client                         client?      @relation(fields: [client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_8F91ABF019EB6921")
+  course                         course?      @relation(fields: [course_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_8F91ABF0591CC992")
+  chauffeur                      chauffeur?   @relation(fields: [chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_8F91ABF085C0B3BE")
+
+  @@index([client_id], map: "IDX_8F91ABF019EB6921")
+  @@index([course_id], map: "IDX_8F91ABF0591CC992")
+  @@index([chauffeur_id], map: "IDX_8F91ABF085C0B3BE")
+}
+
+model avis_verifie_log {
+  id         Int      @id @default(autoincrement())
+  course_id  Int?
+  rate       Float
+  created_at DateTime @db.DateTime(0)
+  course     course?  @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_71998A57591CC992")
+
+  @@index([course_id], map: "IDX_71998A57591CC992")
+}
+
+model billing_account {
+  id                           Int                     @id @default(autoincrement())
+  company_name                 String                  @db.VarChar(255)
+  billing_contact_name         String?                 @db.VarChar(255)
+  billing_contact_email        String                  @db.VarChar(255)
+  billing_contact_phone_number String?                 @db.VarChar(255)
+  address1                     String                  @db.VarChar(255)
+  address2                     String?                 @db.VarChar(255)
+  city                         String                  @db.VarChar(255)
+  zip                          String                  @db.VarChar(255)
+  siret                        String                  @db.VarChar(255)
+  siren                        String?                 @db.VarChar(255)
+  vat                          String                  @db.VarChar(255)
+  external_billing_code        String                  @db.VarChar(255)
+  internal_billing_code        String?                 @db.VarChar(255)
+  canon_billing_code           String                  @db.VarChar(255)
+  bill_template                Int
+  indice_CNR                   Float
+  part_gazoil                  Float
+  country                      String                  @default("France") @db.VarChar(255)
+  TVA_number                   Int?
+  biller                       billing_account_biller?
+  from                         String?                 @db.VarChar(255)
+  comptability_code            String?                 @db.VarChar(255)
+  canal_vente                  canal_vente[]
+}
+
+model canal_vente {
+  id                           Int                            @id @default(autoincrement())
+  code                         String                         @db.VarChar(255)
+  name                         String                         @db.VarChar(255)
+  is_children                  Boolean                        @default(false)
+  deleted_at                   DateTime?                      @db.DateTime(0)
+  business_unit                String                         @db.VarChar(255)
+  business_owner               Int?
+  rules_id                     Int?
+  macro_canal                  Int?
+  is_warning                   Boolean                        @default(false)
+  billing_accounts_id          Int
+  adresse_enrichie             adresse_enrichie[]
+  articles_canal_vente         articles_canal_vente[]
+  assembly                     assembly[]
+  billing_account              billing_account                @relation(fields: [billing_accounts_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_EB12956A4BDA4855")
+  collaborateur                collaborateur?                 @relation(fields: [business_owner], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EB12956AB18101C3")
+  canal_vente                  canal_vente?                   @relation("canal_venteTocanal_vente", fields: [macro_canal], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EB12956AE2FCA47B")
+  other_canal_vente            canal_vente[]                  @relation("canal_venteTocanal_vente")
+  pricingrules                 pricingrules?                  @relation(fields: [rules_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_EB12956AFB699244")
+  canal_vente_article_families canal_vente_article_families[]
+  canal_vente_collaborateurs   canal_vente_collaborateurs[]
+  canal_vente_config           canal_vente_config?
+  canal_vente_config_meta      canal_vente_config_meta[]
+  canal_vente_notifications    canal_vente_notifications[]
+  canal_vente_option           canal_vente_option[]
+  canal_vente_picture_types    canal_vente_picture_types[]
+  canal_vente_type_paiement    canal_vente_type_paiement[]
+  canal_vente_zone_chauffeur   canal_vente_zone_chauffeur?
+  cmdDevis                     cmdDevis[]
+  commande                     commande[]
+  prestation_canal_service     prestation_canal_service[]
+  societe                      societe[]
+  tarification_details         tarification_details[]
+
+  @@index([billing_accounts_id], map: "IDX_EB12956A4BDA4855")
+  @@index([business_owner], map: "IDX_EB12956AB18101C3")
+  @@index([macro_canal], map: "IDX_EB12956AE2FCA47B")
+  @@index([rules_id], map: "IDX_EB12956AFB699244")
+}
+
+model canal_vente_article_families {
+  canal_vente_id    Int
+  article_family_id Int
+  article_family    article_family @relation(fields: [article_family_id], references: [id], onUpdate: Restrict, map: "FK_484E4DC0196B064E")
+  canal_vente       canal_vente    @relation(fields: [canal_vente_id], references: [id], onUpdate: Restrict, map: "FK_484E4DC0DC8E843A")
+
+  @@id([canal_vente_id, article_family_id])
+  @@index([article_family_id], map: "IDX_484E4DC0196B064E")
+  @@index([canal_vente_id], map: "IDX_484E4DC0DC8E843A")
+}
+
+model canal_vente_collaborateurs {
+  canal_vente_id   Int
+  collaborateur_id Int
+  collaborateur    collaborateur @relation(fields: [collaborateur_id], references: [id], onUpdate: Restrict, map: "FK_71D52C37A848E3B1")
+  canal_vente      canal_vente   @relation(fields: [canal_vente_id], references: [id], onUpdate: Restrict, map: "FK_71D52C37DC8E843A")
+
+  @@id([canal_vente_id, collaborateur_id])
+  @@index([collaborateur_id], map: "IDX_71D52C37A848E3B1")
+  @@index([canal_vente_id], map: "IDX_71D52C37DC8E843A")
+}
+
+model canal_vente_config {
+  id                                Int                                  @id @default(autoincrement())
+  canal_vente_id                    Int?                                 @unique(map: "UNIQ_548A5E7FDC8E843A")
+  is_price_based_purchaseamount     Boolean
+  is_price_based_nbitems            Boolean
+  is_fixedprice_include_manutention Boolean
+  package_loading_time              Int
+  is_price_based_weight             Boolean
+  is_price_based_date               Boolean
+  trello_label_id                   String                               @db.VarChar(255)
+  metabase_url                      String                               @db.VarChar(255)
+  centiro_bu_code                   String                               @db.VarChar(255)
+  typeform_url                      String                               @db.VarChar(255)
+  has_prepared_option               Boolean
+  default_pickup_J                  Int?
+  default_pickup_H                  Int?
+  includedServices                  canal_vente_config_includedServices?
+  day_max_booking                   Int?
+  external_canal_code               String                               @db.VarChar(255)
+  hour_min_booking                  Int                                  @default(1)
+  has_supply_step                   Boolean                              @default(false)
+  is_rule_based                     Boolean                              @default(false)
+  default_service_id                Int                                  @default(1)
+  customer_service_phone            String?                              @db.VarChar(100)
+  customer_service_mail             String?                              @db.VarChar(100)
+  pourcentage                       Float                                @default(1)
+  is_price_based_volume             Boolean
+  logo                              String?                              @default("https://logo-b2h.s3.eu-west-3.amazonaws.com/b2h-header-logo.png") @db.VarChar(255)
+  is_chat_active                    Boolean                              @default(false)
+  sms_j                             Boolean                              @default(false)
+  prefix_facture                    String                               @db.VarChar(255)
+  alert_url                         String                               @db.VarChar(255)
+  catalogue_base_url                String?                              @db.VarChar(500)
+  default_assigned_H                Int?
+  senderSMS                         canal_vente_config_senderSMS         @default(Warning_)
+  has_auto_assigned                 Boolean
+  services                          services                             @relation(fields: [default_service_id], references: [id], onUpdate: Restrict, map: "FK_548A5E7FA57FFD85")
+  canal_vente                       canal_vente?                         @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_548A5E7FDC8E843A")
+  canal_vente_operational_hours     canal_vente_operational_hours[]
+
+  @@index([default_service_id], map: "IDX_548A5E7FA57FFD85")
+}
+
+model canal_vente_config_meta {
+  id             Int          @id @default(autoincrement())
+  canal_vente_id Int?
+  meta_key       String       @db.VarChar(255)
+  meta_value     String       @db.LongText
+  canal_vente    canal_vente? @relation(fields: [canal_vente_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_E8F26DA7DC8E843A")
+
+  @@index([canal_vente_id], map: "IDX_E8F26DA7DC8E843A")
+}
+
+model canal_vente_notifications {
+  canal_vente_id   Int
+  notification_id  Int
+  canal_vente      canal_vente      @relation(fields: [canal_vente_id], references: [id], onUpdate: Restrict, map: "FK_7CCFC211DC8E843A")
+  NotificationView NotificationView @relation(fields: [notification_id], references: [id], onUpdate: Restrict, map: "FK_7CCFC211EF1A9D84")
+
+  @@id([canal_vente_id, notification_id])
+  @@index([canal_vente_id], map: "IDX_7CCFC211DC8E843A")
+  @@index([notification_id], map: "IDX_7CCFC211EF1A9D84")
+}
+
+model canal_vente_operational_hours {
+  canal_vente_config_id Int
+  operational_hour_id   Int
+  canal_vente_config    canal_vente_config @relation(fields: [canal_vente_config_id], references: [id], onUpdate: Restrict, map: "FK_804EC5A210B9F0ED")
+  operational_hours     operational_hours  @relation(fields: [operational_hour_id], references: [id], onUpdate: Restrict, map: "FK_804EC5A21D71189A")
+
+  @@id([canal_vente_config_id, operational_hour_id])
+  @@index([canal_vente_config_id], map: "IDX_804EC5A210B9F0ED")
+  @@index([operational_hour_id], map: "IDX_804EC5A21D71189A")
+}
+
+model canal_vente_option {
+  id                      Int                                 @id @default(autoincrement())
+  canal_vente_id          Int?
+  label                   String                              @db.VarChar(255)
+  price                   Float
+  created_at              DateTime?                           @db.DateTime(0)
+  deleted_at              DateTime?                           @db.DateTime(0)
+  order_service           canal_vente_option_order_service?
+  default_vehicule_option Int?
+  new_partner_service     Int?
+  assemblies_options      assemblies_options[]
+  partner_service         partner_service?                    @relation(fields: [new_partner_service], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_DA8671B3D5F90B3C")
+  canal_vente             canal_vente?                        @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_DA8671B3DC8E843A")
+  courses_options         courses_options[]
+
+  @@index([new_partner_service], map: "IDX_DA8671B3D5F90B3C")
+  @@index([canal_vente_id], map: "IDX_DA8671B3DC8E843A")
+}
+
+model canal_vente_picture_types {
+  canal_vente_id  Int
+  picture_type_id Int
+  picture_type    picture_type @relation(fields: [picture_type_id], references: [id], onUpdate: Restrict, map: "FK_C5257CBCD86A7841")
+  canal_vente     canal_vente  @relation(fields: [canal_vente_id], references: [id], onUpdate: Restrict, map: "FK_C5257CBCDC8E843A")
+
+  @@id([canal_vente_id, picture_type_id])
+  @@index([picture_type_id], map: "IDX_C5257CBCD86A7841")
+  @@index([canal_vente_id], map: "IDX_C5257CBCDC8E843A")
+}
+
+model canal_vente_type_paiement {
+  canal_vente_id   Int
+  type_paiement_id Int
+  type_paiement    type_paiement @relation(fields: [type_paiement_id], references: [id], onUpdate: Restrict, map: "FK_60EC2F20615593E9")
+  canal_vente      canal_vente   @relation(fields: [canal_vente_id], references: [id], onUpdate: Restrict, map: "FK_60EC2F20DC8E843A")
+
+  @@id([canal_vente_id, type_paiement_id])
+  @@index([type_paiement_id], map: "IDX_60EC2F20615593E9")
+  @@index([canal_vente_id], map: "IDX_60EC2F20DC8E843A")
+}
+
+model canal_vente_zone_chauffeur {
+  id                Int               @id @default(autoincrement())
+  canal_vente_id    Int?              @unique(map: "UNIQ_A7474823DC8E843A")
+  zone_chauffeur_id Int?
+  created_at        DateTime?         @db.DateTime(0)
+  updated_at        DateTime?         @db.DateTime(0)
+  zones_chauffeurs  zones_chauffeurs? @relation(fields: [zone_chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_A74748235F00216D")
+  canal_vente       canal_vente?      @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_A7474823DC8E843A")
+
+  @@index([zone_chauffeur_id], map: "IDX_A74748235F00216D")
+}
+
+model category {
+  id           Int            @id @default(autoincrement())
+  code         String         @db.VarChar(255)
+  label        String         @db.VarChar(255)
+  deleted_at   DateTime?      @db.DateTime(0)
+  sub_category sub_category[]
+}
+
+model change_reasons {
+  id                          Int                          @id @default(autoincrement())
+  code                        String                       @db.VarChar(255)
+  motif                       String                       @db.VarChar(255)
+  action                      String?                      @db.VarChar(255)
+  enabled                     Boolean?
+  deleted_at                  DateTime?                    @db.DateTime(0)
+  type                        change_reasons_type?
+  status_id                   Int?
+  admin_status_id             Int?
+  administ_status_flow        administ_status_flow[]
+  status_course               status_course?               @relation(fields: [status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_E28499016BF700BD")
+  course_administratif_status course_administratif_status? @relation(fields: [admin_status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_E28499018200058F")
+  delta_cost                  delta_cost[]
+  logistic_status_flow        logistic_status_flow[]
+
+  @@index([status_id], map: "IDX_E28499016BF700BD")
+  @@index([admin_status_id], map: "IDX_E28499018200058F")
+}
+
+model chauffeur {
+  id                                                           Int                           @id @default(autoincrement())
+  premium_id                                                   Int?                          @unique(map: "UNIQ_5CA777B8F7798796")
+  latitude                                                     Float?
+  longitude                                                    Float?
+  etat                                                         Int?
+  heading                                                      Float?
+  lastname                                                     String                        @db.VarChar(255)
+  firstname                                                    String                        @db.VarChar(255)
+  birth_day                                                    String?                       @db.VarChar(255)
+  login                                                        String                        @db.VarChar(255)
+  password                                                     String                        @db.VarChar(255)
+  created_at                                                   DateTime                      @db.DateTime(0)
+  validated_at                                                 DateTime?                     @db.DateTime(0)
+  validation_end_at                                            DateTime?                     @db.DateTime(0)
+  valide                                                       Boolean?
+  manutention                                                  Boolean?
+  phone                                                        String?                       @unique(map: "UNIQ_5CA777B8444F97DD") @db.VarChar(255)
+  code                                                         String                        @db.VarChar(255)
+  company_name                                                 String                        @db.VarChar(255)
+  company_siret                                                String                        @db.VarChar(255)
+  image_avatar_url                                             String?                       @db.VarChar(255)
+  checked                                                      Boolean?
+  timezone                                                     String                        @default("Europe/Paris") @db.VarChar(255)
+  deleted_at                                                   DateTime?                     @db.DateTime(0)
+  fcm_token                                                    String?                       @db.VarChar(255)
+  on_duty                                                      Int?
+  device_info                                                  String?                       @db.VarChar(255)
+  last_login_at                                                DateTime?                     @db.DateTime(0)
+  last_logout_at                                               DateTime?                     @db.DateTime(0)
+  societe_id                                                   Int?
+  role                                                         String                        @db.VarChar(30)
+  external_id                                                  Int?
+  adresse_depart                                               Int?
+  adresse_arrivee                                              Int?
+  current_vehicule                                             Int?
+  administ_status_flow                                         administ_status_flow[]
+  auth_token                                                   auth_token[]
+  avis                                                         avis[]
+  vehicule                                                     vehicule?                     @relation(fields: [current_vehicule], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_5CA777B8B4578537")
+  adresse_enrichie_chauffeur_adresse_departToadresse_enrichie  adresse_enrichie?             @relation("chauffeur_adresse_departToadresse_enrichie", fields: [adresse_depart], references: [id], onUpdate: Restrict, map: "FK_5CA777B8D4EB6EE0")
+  adresse_enrichie_chauffeur_adresse_arriveeToadresse_enrichie adresse_enrichie?             @relation("chauffeur_adresse_arriveeToadresse_enrichie", fields: [adresse_arrivee], references: [id], onUpdate: Restrict, map: "FK_5CA777B8E84B9E8B")
+  premium                                                      premium?                      @relation(fields: [premium_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_5CA777B8F7798796")
+  chauffeur_societe                                            chauffeur_societe?            @relation(fields: [societe_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_5CA777B8FCF77503")
+  chauffeur_operational_hours                                  chauffeur_operational_hours[]
+  chauffeur_prestations                                        chauffeur_prestations[]
+  chauffeur_zone_chauffeur                                     chauffeur_zone_chauffeur[]
+  code_sms                                                     code_sms[]
+  container_tracability                                        container_tracability[]
+  course                                                       course[]
+  document                                                     document[]
+  groupe_tracability                                           groupe_tracability[]
+  log                                                          log[]
+  logistic_status_flow                                         logistic_status_flow[]
+  package_traceability                                         package_traceability[]
+
+  @@index([current_vehicule], map: "IDX_5CA777B8B4578537")
+  @@index([adresse_depart], map: "IDX_5CA777B8D4EB6EE0")
+  @@index([adresse_arrivee], map: "IDX_5CA777B8E84B9E8B")
+  @@index([societe_id], map: "IDX_5CA777B8FCF77503")
+  @@index([phone], map: "search_index")
+}
+
+model chauffeur_operational_hours {
+  chauffeur_id        Int
+  operational_hour_id Int
+  operational_hours   operational_hours @relation(fields: [operational_hour_id], references: [id], onUpdate: Restrict, map: "FK_6C1743881D71189A")
+  chauffeur           chauffeur         @relation(fields: [chauffeur_id], references: [id], onUpdate: Restrict, map: "FK_6C17438885C0B3BE")
+
+  @@id([chauffeur_id, operational_hour_id])
+  @@index([operational_hour_id], map: "IDX_6C1743881D71189A")
+  @@index([chauffeur_id], map: "IDX_6C17438885C0B3BE")
+}
+
+model chauffeur_prestations {
+  chauffeur_id  Int
+  prestation_id Int
+  chauffeur     chauffeur @relation(fields: [chauffeur_id], references: [id], onUpdate: Restrict, map: "FK_979CA18F85C0B3BE")
+  services      services  @relation(fields: [prestation_id], references: [id], onUpdate: Restrict, map: "FK_979CA18F9E45C554")
+
+  @@id([chauffeur_id, prestation_id])
+  @@index([chauffeur_id], map: "IDX_979CA18F85C0B3BE")
+  @@index([prestation_id], map: "IDX_979CA18F9E45C554")
+}
+
+model chauffeur_societe {
+  id         Int         @id @default(autoincrement())
+  name       String      @db.VarChar(255)
+  siret      String      @db.VarChar(25)
+  address    String      @db.VarChar(255)
+  tel        String      @db.VarChar(25)
+  email      String      @db.VarChar(50)
+  code_tva   String      @db.VarChar(255)
+  created_at DateTime    @db.DateTime(0)
+  updated_at DateTime?   @db.DateTime(0)
+  deleted_at DateTime?   @db.DateTime(0)
+  chauffeur  chauffeur[]
+  vehicule   vehicule[]
+}
+
+model chauffeur_zone_chauffeur {
+  zone_chauffeur_id Int
+  chauffeur_id      Int
+  zones_chauffeurs  zones_chauffeurs @relation(fields: [zone_chauffeur_id], references: [id], onUpdate: Restrict, map: "FK_9B55821D5F00216D")
+  chauffeur         chauffeur        @relation(fields: [chauffeur_id], references: [id], onUpdate: Restrict, map: "FK_9B55821D85C0B3BE")
+
+  @@id([zone_chauffeur_id, chauffeur_id])
+  @@index([zone_chauffeur_id], map: "IDX_9B55821D5F00216D")
+  @@index([chauffeur_id], map: "IDX_9B55821D85C0B3BE")
+}
+
+model city {
+  id                     Int                      @id @default(autoincrement())
+  warehouse_id           Int?
+  postal_code            String                   @db.VarChar(255)
+  name                   String                   @db.VarChar(255)
+  zone_montagneuse       String                   @db.VarChar(255)
+  warehouse              warehouse?               @relation(fields: [warehouse_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_2D5B0234864AC21A")
+  city_operational_hours city_operational_hours[]
+
+  @@index([warehouse_id], map: "IDX_2D5B02345080ECDE")
+}
+
+model city_operational_hours {
+  city_id             Int
+  operational_hour_id Int
+  operational_hours   operational_hours @relation(fields: [operational_hour_id], references: [id], onUpdate: Restrict, map: "FK_D581729D1D71189A")
+  city                city              @relation(fields: [city_id], references: [id], onUpdate: Restrict, map: "FK_D581729D8BAC62AF")
+
+  @@id([city_id, operational_hour_id])
+  @@index([operational_hour_id], map: "IDX_D581729D1D71189A")
+  @@index([city_id], map: "IDX_D581729D8BAC62AF")
+}
+
+model client {
+  id                              Int                               @id @default(autoincrement())
+  enregistre                      Boolean?
+  login                           String?                           @unique(map: "UNIQ_C7440455AA08CB10") @db.VarChar(255)
+  password                        String?                           @db.VarChar(255)
+  firstname                       String?                           @db.VarChar(255)
+  lastname                        String?                           @db.VarChar(255)
+  adresse_facturation             String?                           @db.VarChar(255)
+  phone                           String                            @unique(map: "UNIQ_C7440455444F97DD") @db.VarChar(255)
+  mail                            String                            @unique(map: "UNIQ_C74404555126AC48") @db.VarChar(255)
+  reputation                      String?                           @db.VarChar(255)
+  accept_condition                Boolean?
+  accept_mail_notification        Boolean?
+  stripe_customer_id              String?                           @db.VarChar(255)
+  checked                         Boolean?
+  image_avatar_url                String?                           @db.VarChar(255)
+  timezone                        String                            @default("Europe/Paris") @db.VarChar(255)
+  confirmation_token              String?                           @db.VarChar(255)
+  reset_token                     String?                           @db.VarChar(255)
+  mail_checked                    Boolean?
+  created_at                      DateTime?                         @db.DateTime(0)
+  updated_at                      DateTime?                         @db.DateTime(0)
+  deleted_at                      DateTime?                         @db.DateTime(0)
+  fcm_token                       String?                           @db.VarChar(255)
+  societe_id                      Int?
+  vip                             Boolean?
+  autoconnect_key                 String?                           @unique(map: "UNIQ_C74404556748D722") @db.VarChar(255)
+  is_admin                        Boolean                           @default(false)
+  is_primary                      Boolean                           @default(false)
+  initiate_chat                   Boolean                           @default(false)
+  email_checked                   Boolean?                          @default(true)
+  adresse_favorite                adresse_favorite[]
+  assembly                        assembly[]
+  auth_token                      auth_token[]
+  avis                            avis[]
+  societe                         societe?                          @relation(fields: [societe_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_C7440455FCF77503")
+  code_sms                        code_sms[]
+  commande                        commande[]
+  contact_arrivee                 contact_arrivee[]
+  contact_depart                  contact_depart[]
+  log                             log[]
+  logistic_status_flow            logistic_status_flow[]
+  probleme                        probleme[]
+  tarification_details_client_pro tarification_details_client_pro[]
+
+  @@index([societe_id], map: "IDX_C7440455FCF77503")
+}
+
+model client_calls_log {
+  id                 Int       @id @default(autoincrement())
+  direction          String    @db.VarChar(255)
+  started_at         DateTime? @db.DateTime(0)
+  answered_at        DateTime? @db.DateTime(0)
+  ended_at           DateTime? @db.DateTime(0)
+  duration           String?   @db.VarChar(255)
+  phone              String    @db.VarChar(255)
+  voicemail          String?   @db.VarChar(255)
+  recording          String?   @db.VarChar(255)
+  missed_call_reason String?   @db.VarChar(255)
+  assigned_to        String?   @db.VarChar(255)
+  comments           String?   @db.VarChar(255)
+  tags               String?   @db.VarChar(255)
+  aircall_call_id    Int?
+  aircall_number     String    @db.VarChar(255)
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model client_phones {
+  external_code String @db.VarChar(50)
+  number        String @db.VarChar(50)
+
+  @@ignore
+}
+
+model cmdDevis {
+  id                                                          Int                          @id @default(autoincrement())
+  canal_vente_id                                              Int?
+  MP_OrderId                                                  String                       @db.VarChar(255)
+  MP_referenceId                                              String                       @db.VarChar(255)
+  quoteId                                                     String                       @unique(map: "UNIQ_CE86056A56DB1702") @db.VarChar(255)
+  status                                                      cmdDevis_status?
+  Montant_HT                                                  Float
+  vehiculeCategoryId                                          cmdDevis_vehiculeCategoryId?
+  reason                                                      String?                      @db.VarChar(255)
+  devis_info                                                  String                       @db.LongText
+  created_at                                                  DateTime                     @db.DateTime(0)
+  deleted_at                                                  DateTime?                    @db.DateTime(0)
+  weight                                                      Float?
+  volume                                                      Float?
+  nombre_package                                              Int?
+  estimated_km                                                Float?
+  comment                                                     String?                      @db.LongText
+  adresse_depart                                              Int?
+  adresse_arrivee                                             Int?
+  cmddevis_id                                                 Int?                         @unique(map: "UNIQ_CE86056AA3DB3B0E")
+  commande                                                    commande?                    @relation(fields: [cmddevis_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_CE86056AA3DB3B0E")
+  adresse_enrichie_cmdDevis_adresse_departToadresse_enrichie  adresse_enrichie?            @relation("cmdDevis_adresse_departToadresse_enrichie", fields: [adresse_depart], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_CE86056AD4EB6EE0")
+  canal_vente                                                 canal_vente?                 @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_CE86056ADC8E843A")
+  adresse_enrichie_cmdDevis_adresse_arriveeToadresse_enrichie adresse_enrichie?            @relation("cmdDevis_adresse_arriveeToadresse_enrichie", fields: [adresse_arrivee], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_CE86056AE84B9E8B")
+
+  @@index([adresse_depart], map: "IDX_CE86056AD4EB6EE0")
+  @@index([canal_vente_id], map: "IDX_CE86056ADC8E843A")
+  @@index([adresse_arrivee], map: "IDX_CE86056AE84B9E8B")
+}
+
+model code_sms {
+  id           Int        @id @default(autoincrement())
+  client_id    Int?
+  code         String     @unique(map: "UNIQ_58890DDD77153098") @db.VarChar(255)
+  etat         String     @db.VarChar(255)
+  chauffeur_id Int?
+  deleted_at   DateTime?  @db.DateTime(0)
+  created_at   DateTime?  @db.DateTime(0)
+  updated_at   DateTime?  @db.DateTime(0)
+  client       client?    @relation(fields: [client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_58890DDD19EB6921")
+  chauffeur    chauffeur? @relation(fields: [chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_58890DDD85C0B3BE")
+
+  @@index([client_id], map: "IDX_58890DDD19EB6921")
+  @@index([chauffeur_id], map: "IDX_58890DDD85C0B3BE")
+}
+
+model collaborateur {
+  id                                                 Int                           @id @default(autoincrement())
+  login                                              String                        @unique(map: "UNIQ_770CBCD3AA08CB10") @db.VarChar(255)
+  password                                           String                        @db.VarChar(255)
+  lastname                                           String                        @db.VarChar(255)
+  firstname                                          String                        @db.VarChar(255)
+  birth_day                                          String?                       @db.VarChar(255)
+  phone                                              String                        @db.VarChar(255)
+  embauche_date                                      DateTime?                     @db.DateTime(0)
+  photo_identity                                     String?                       @db.LongText
+  timezone                                           String                        @default("Europe/Paris") @db.VarChar(255)
+  deleted_at                                         DateTime?                     @db.DateTime(0)
+  is_admin                                           Boolean                       @default(false)
+  tentative                                          Int                           @default(0)
+  is_businessOwner                                   Boolean                       @default(false)
+  collab_type                                        collaborateur_collab_type?
+  collab_profile                                     collaborateur_collab_profile?
+  administ_status_flow                               administ_status_flow[]
+  assembly                                           assembly[]
+  auth_token                                         auth_token[]
+  canal_vente                                        canal_vente[]
+  canal_vente_collaborateurs                         canal_vente_collaborateurs[]
+  collaborateur_prestations                          collaborateur_prestations[]
+  commande                                           commande[]
+  container_tracability                              container_tracability[]
+  delta_cost_delta_cost_collaborateurTocollaborateur delta_cost[]                  @relation("delta_cost_collaborateurTocollaborateur")
+  formulaire_collaborateur                           formulaire_collaborateur[]
+  freight_traceability                               freight_traceability[]
+  groupe_tracability                                 groupe_tracability[]
+  log                                                log[]
+  logistic_status_flow                               logistic_status_flow[]
+  package_traceability                               package_traceability[]
+  pricingrules                                       pricingrules[]
+  reverse                                            reverse[]
+  sav_ticket                                         sav_ticket[]
+  sub_category                                       sub_category[]
+  warehouse_collaborateur                            warehouse_collaborateur[]
+}
+
+model collaborateur_prestations {
+  collaborateur_id Int
+  prestation_id    Int
+  services         services      @relation(fields: [prestation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_1DC82FE59E45C554")
+  collaborateur    collaborateur @relation(fields: [collaborateur_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_1DC82FE5A848E3B1")
+
+  @@id([collaborateur_id, prestation_id])
+  @@index([prestation_id], map: "IDX_1DC82FE59E45C554")
+  @@index([collaborateur_id], map: "IDX_1DC82FE5A848E3B1")
+}
+
+model commande {
+  id                          Int                     @id @default(autoincrement())
+  canal_vente_id              Int?
+  facture_id                  Int?                    @unique(map: "UNIQ_6EEAA67D7F2DEE08")
+  devis_id                    Int?                    @unique(map: "UNIQ_6EEAA67D41DEFADA")
+  client_id                   Int?
+  montant_global_ht           Float
+  code_tva                    Float
+  montant_global_ttc          Float
+  date_facturation            DateTime?               @db.DateTime(0)
+  promotion_id                Int?
+  deleted_at                  DateTime?               @db.DateTime(0)
+  etat_paiement               commande_etat_paiement?
+  stripe_source_id            String?                 @db.VarChar(255)
+  stripe_charge_id            String?                 @db.VarChar(255)
+  created_at                  DateTime?               @db.DateTime(0)
+  updated_at                  DateTime?               @db.DateTime(0)
+  collaborateur_id            Int?
+  stripe_invoice_id           String?                 @db.VarChar(255)
+  moyen_paiement_id           Int?
+  stripe_invoice_payment_link String?                 @db.VarChar(255)
+  partner_order_number        String?                 @db.VarChar(255)
+  melting_point_order_number  String?                 @db.VarChar(255)
+  cmdDevis                    cmdDevis?
+  promotion                   promotion?              @relation(fields: [promotion_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6EEAA67D139DF194")
+  client                      client?                 @relation(fields: [client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6EEAA67D19EB6921")
+  devis                       devis?                  @relation(fields: [devis_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6EEAA67D41DEFADA")
+  facture                     facture?                @relation(fields: [facture_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6EEAA67D7F2DEE08")
+  type_paiement               type_paiement?          @relation(fields: [moyen_paiement_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6EEAA67D9C7E259C")
+  collaborateur               collaborateur?          @relation(fields: [collaborateur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6EEAA67DA848E3B1")
+  canal_vente                 canal_vente?            @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6EEAA67DDC8E843A")
+  commande_extra              commande_extra?
+  course                      course[]
+
+  @@index([promotion_id], map: "IDX_6EEAA67D139DF194")
+  @@index([client_id], map: "IDX_6EEAA67D19EB6921")
+  @@index([moyen_paiement_id], map: "IDX_6EEAA67D9C7E259C")
+  @@index([collaborateur_id], map: "IDX_6EEAA67DA848E3B1")
+  @@index([canal_vente_id], map: "IDX_6EEAA67DDC8E843A")
+  @@index([partner_order_number], map: "partner_order_number_idx")
+}
+
+model commande_extra {
+  id             Int       @id @default(autoincrement())
+  commande_id    Int?      @unique(map: "UNIQ_7457D2A682EA2E54")
+  montant_espece Float?
+  montant_cb     Float?
+  partial_refund Float?
+  commande       commande? @relation(fields: [commande_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7457D2A682EA2E54")
+}
+
+model contact_arrivee {
+  id                   Int                       @id @default(autoincrement())
+  client_id            Int?
+  firstname            String?                   @db.VarChar(255)
+  lastname             String?                   @db.VarChar(255)
+  phone                String?                   @db.VarChar(255)
+  mail                 String?                   @db.VarChar(255)
+  nom_societe_arrivee  String?                   @db.VarChar(255)
+  deleted_at           DateTime?                 @db.DateTime(0)
+  secondery_phone      String?                   @db.VarChar(255)
+  civility             contact_arrivee_civility?
+  timezone             String                    @default("Europe/Paris") @db.VarChar(255)
+  email_checked        Boolean?                  @default(true)
+  administ_status_flow administ_status_flow[]
+  adresse_enrichie     adresse_enrichie[]
+  assembly             assembly[]
+  auth_token           auth_token[]
+  client               client?                   @relation(fields: [client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4C62E63819EB6921")
+  course               course[]
+  log                  log[]
+  logistic_status_flow logistic_status_flow[]
+
+  @@index([client_id], map: "IDX_DC7A009519EB6921")
+}
+
+model contact_depart {
+  id                 Int          @id @default(autoincrement())
+  client_id          Int?
+  firstname          String?      @db.VarChar(255)
+  lastname           String?      @db.VarChar(255)
+  phone              String?      @db.VarChar(255)
+  mail               String?      @db.VarChar(255)
+  nom_societe_depart String?      @db.VarChar(255)
+  timezone           String       @default("Europe/Paris") @db.VarChar(255)
+  email_checked      Boolean?     @default(true)
+  auth_token         auth_token[]
+  client             client?      @relation(fields: [client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_8BAC8C8919EB6921")
+  course             course[]
+
+  @@index([client_id], map: "IDX_8BAC8C8919EB6921")
+}
+
+model container {
+  id                    Int                     @id @default(autoincrement())
+  barcode               String                  @db.VarChar(255)
+  created_at            DateTime                @db.DateTime(0)
+  status                container_status?
+  updated_at            DateTime?               @db.DateTime(0)
+  container_tracability container_tracability[]
+  groupe                groupe[]
+  reverse_container     reverse_container[]
+  reverse_pictures      reverse_pictures[]
+
+  @@index([barcode], map: "barcode_idx")
+}
+
+model container_tracability {
+  id                                                                     Int                           @id @default(autoincrement())
+  delivery_status                                                        Int?
+  container_id                                                           Int?
+  flashed_at                                                             DateTime?                     @db.DateTime(0)
+  created_at                                                             DateTime?                     @db.DateTime(0)
+  updated_at                                                             DateTime?                     @db.DateTime(0)
+  deleted_at                                                             DateTime?                     @db.DateTime(0)
+  litigation_id                                                          Int?                          @unique(map: "UNIQ_150CB8C47CBE719")
+  collaborateur_id                                                       Int?
+  chauffeur_id                                                           Int?
+  step                                                                   Int
+  source                                                                 container_tracability_source?
+  delivery_status_container_tracability_delivery_statusTodelivery_status delivery_status?              @relation("container_tracability_delivery_statusTodelivery_status", fields: [delivery_status], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_150CB8C465119C92")
+  litigation_container_tracability_litigation_idTolitigation             litigation?                   @relation("container_tracability_litigation_idTolitigation", fields: [litigation_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_150CB8C47CBE719")
+  chauffeur                                                              chauffeur?                    @relation(fields: [chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_150CB8C485C0B3BE")
+  collaborateur                                                          collaborateur?                @relation(fields: [collaborateur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_150CB8C4A848E3B1")
+  container                                                              container?                    @relation(fields: [container_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_150CB8C4BC21F742")
+  litigation_litigation_container_tracabilityTocontainer_tracability     litigation?                   @relation("litigation_container_tracabilityTocontainer_tracability")
+
+  @@index([delivery_status], map: "IDX_150CB8C465119C92")
+  @@index([chauffeur_id], map: "IDX_150CB8C485C0B3BE")
+  @@index([collaborateur_id], map: "IDX_150CB8C4A848E3B1")
+  @@index([container_id], map: "IDX_150CB8C4BC21F742")
+}
+
+model conversation_subject {
+  id               Int                                    @id @default(autoincrement())
+  code             String                                 @db.VarChar(255)
+  label            String                                 @db.VarChar(255)
+  is_admin         Int?                                   @default(1)
+  service_traitant conversation_subject_service_traitant?
+  nature           conversation_subject_nature?
+}
+
+model course {
+  id                                                               Int                          @id @default(autoincrement())
+  adresse_depart                                                   Int?
+  adresse_arrivee                                                  Int?
+  chauffeur_id                                                     Int?
+  lettre_voiture_id                                                Int?                         @unique(map: "UNIQ_169E6FB970FD261B")
+  contact_arrivee_id                                               Int?
+  status_id                                                        Int?
+  commande_id                                                      Int?
+  code                                                             String                       @db.VarChar(254)
+  point_enlevement                                                 String?                      @db.VarChar(100)
+  motif_annulation                                                 String?                      @db.VarChar(200)
+  motif_annulation_client                                          String?                      @db.VarChar(200)
+  vehicule_type                                                    String?                      @db.VarChar(255)
+  observation                                                      String?                      @db.LongText
+  factures                                                         String?                      @db.VarChar(255)
+  nombre_colis                                                     Int?
+  manutention                                                      Boolean?
+  estimated_km                                                     Float?
+  duree_course                                                     String?                      @db.VarChar(255)
+  date_enlevement                                                  DateTime?                    @db.DateTime(0)
+  date_livraison                                                   DateTime?                    @db.DateTime(0)
+  date_demarrage                                                   DateTime?                    @db.DateTime(0)
+  created_at                                                       DateTime?                    @db.DateTime(0)
+  updated_at                                                       DateTime?                    @db.DateTime(0)
+  montantHT                                                        Float?
+  token                                                            String?                      @db.VarChar(255)
+  nom_societe                                                      String?                      @db.VarChar(255)
+  adresse_facturation                                              String?                      @db.VarChar(255)
+  course_source                                                    String?                      @db.VarChar(20)
+  observation_arrivee                                              String?                      @db.LongText
+  date_acceptation                                                 DateTime?                    @db.DateTime(0)
+  deleted_at                                                       DateTime?                    @db.DateTime(0)
+  vehicule_id                                                      Int?
+  contact_depart_id                                                Int?
+  manutention_double                                               Boolean?
+  date_affirmation_fin                                             DateTime?                    @db.DateTime(0)
+  note_interne                                                     String?                      @db.Text
+  non_envoi_mail                                                   Boolean?
+  is_status_changed_manually                                       Boolean
+  assigned_at                                                      DateTime?                    @db.DateTime(0)
+  montant_prestataire_ht                                           Float?
+  weight                                                           Float?
+  compta_valid                                                     Int?
+  external_tracking_url                                            String?                      @db.VarChar(254)
+  is_prepared                                                      Boolean?
+  purchase_amount                                                  Float?
+  tarification_details_id                                          Int?
+  elevator                                                         Boolean?
+  floor                                                            Int?
+  coursemetadata_id                                                Int?                         @unique(map: "UNIQ_169E6FB9603757A2")
+  reception_status                                                 Int?
+  delivery_status                                                  Int?
+  customer_delivery_status                                         Int?
+  volume                                                           Float?
+  date_dechargement                                                DateTime?                    @db.DateTime(0)
+  date_debut_chargement                                            DateTime?                    @db.DateTime(0)
+  date_fin_chargement                                              DateTime?                    @db.DateTime(0)
+  date_vers_livraison                                              DateTime?                    @db.DateTime(0)
+  service_id                                                       Int?
+  dropoff_start                                                    DateTime?                    @db.DateTime(0)
+  pickup_start                                                     DateTime?                    @db.DateTime(0)
+  pickup_end                                                       DateTime?                    @db.DateTime(0)
+  dropoff_end                                                      DateTime?                    @db.DateTime(0)
+  canceled_at                                                      DateTime?                    @db.DateTime(0)
+  estimated_time_of_arrival_at_pick_up                             DateTime?                    @db.DateTime(0)
+  estimated_time_of_arrival_at_drop_off                            DateTime?                    @db.DateTime(0)
+  pick_up_rank                                                     Int?
+  drop_off_rank                                                    Int?
+  tour                                                             String?                      @db.VarChar(255)
+  scheduled_at                                                     DateTime?                    @db.DateTime(0)
+  tracking_number                                                  String?                      @unique(map: "UNIQ_169E6FB93E1C9C18") @db.VarChar(12)
+  driver_comment                                                   String?                      @db.LongText
+  failure_reason                                                   String?                      @db.VarChar(255)
+  canal_prestation_service                                         Int?
+  administratif_justif                                             String?                      @db.LongText
+  administratif_status                                             String?                      @db.LongText
+  sms_approche                                                     Boolean?                     @default(false)
+  sms_satisfaction                                                 Boolean?                     @default(false)
+  virtual_signaure                                                 Boolean?                     @default(false)
+  administratif_status_id                                          Int?
+  departure_type                                                   course_departure_type?
+  date_retrait_impossible                                          DateTime?                    @db.DateTime(0)
+  date_livraison_impossible                                        DateTime?                    @db.DateTime(0)
+  receipt_number                                                   String?                      @db.VarChar(255)
+  dateSupplyComplete                                               DateTime?                    @db.DateTime(0)
+  has_conversation                                                 Boolean?                     @default(false)
+  secret_code                                                      String?                      @db.VarChar(254)
+  date_creation_mp                                                 DateTime?                    @db.DateTime(0)
+  facture_url                                                      String?                      @db.VarChar(255)
+  bulky                                                            Boolean?
+  etiquette_url                                                    String?                      @db.VarChar(255)
+  delivery_related                                                 String?                      @db.VarChar(255)
+  CourseMetadata_CourseMetadata_coursemetadata_idTocourse          CourseMetadata?              @relation("CourseMetadata_coursemetadata_idTocourse")
+  administ_status_flow                                             administ_status_flow[]
+  assembly                                                         assembly[]
+  avis                                                             avis[]
+  avis_verifie_log                                                 avis_verifie_log[]
+  delivery_status_course_customer_delivery_statusTodelivery_status delivery_status?             @relation("course_customer_delivery_statusTodelivery_status", fields: [customer_delivery_status], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB91E39DA08")
+  contact_arrivee                                                  contact_arrivee?             @relation(fields: [contact_arrivee_id], references: [id], onUpdate: Restrict, map: "FK_169E6FB92D4927D5")
+  delivery_status_course_reception_statusTodelivery_status         delivery_status?             @relation("course_reception_statusTodelivery_status", fields: [reception_status], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB93803CBDA")
+  course_administratif_status                                      course_administratif_status? @relation(fields: [administratif_status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB93DB2E495")
+  vehicule                                                         vehicule?                    @relation(fields: [vehicule_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB94A4A3511")
+  CourseMetadata_course_coursemetadata_idToCourseMetadata          CourseMetadata?              @relation("course_coursemetadata_idToCourseMetadata", fields: [coursemetadata_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_169E6FB9603757A2")
+  delivery_status_course_delivery_statusTodelivery_status          delivery_status?             @relation("course_delivery_statusTodelivery_status", fields: [delivery_status], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB965119C92")
+  status_course                                                    status_course?               @relation(fields: [status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB96BF700BD")
+  prestation_canal_service                                         prestation_canal_service?    @relation(fields: [canal_prestation_service], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB96EEE9494")
+  lettre_de_voiture                                                lettre_de_voiture?           @relation(fields: [lettre_voiture_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_169E6FB970FD261B")
+  commande                                                         commande?                    @relation(fields: [commande_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_169E6FB982EA2E54")
+  chauffeur                                                        chauffeur?                   @relation(fields: [chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB985C0B3BE")
+  tarification_details                                             tarification_details?        @relation(fields: [tarification_details_id], references: [id], onUpdate: Restrict, map: "FK_169E6FB991BACDC5")
+  contact_depart                                                   contact_depart?              @relation(fields: [contact_depart_id], references: [id], onUpdate: Restrict, map: "FK_169E6FB9C0F3DD30")
+  adresse_enrichie_course_adresse_departToadresse_enrichie         adresse_enrichie?            @relation("course_adresse_departToadresse_enrichie", fields: [adresse_depart], references: [id], onUpdate: Restrict, map: "FK_169E6FB9D4EB6EE0")
+  adresse_enrichie_course_adresse_arriveeToadresse_enrichie        adresse_enrichie?            @relation("course_adresse_arriveeToadresse_enrichie", fields: [adresse_arrivee], references: [id], onUpdate: Restrict, map: "FK_169E6FB9E84B9E8B")
+  services                                                         services?                    @relation(fields: [service_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB9ED5CA9E6")
+  course_attachment                                                course_attachment[]
+  course_date_demarrage_meta                                       course_date_demarrage_meta?
+  course_inner_notation                                            course_inner_notation[]
+  courses_article_families                                         courses_article_families[]
+  courses_articles                                                 courses_articles[]
+  courses_options                                                  courses_options[]
+  delivery_pictures                                                delivery_pictures[]
+  delta_cost                                                       delta_cost?
+  extra_data                                                       extra_data[]
+  logistic_status_flow                                             logistic_status_flow[]
+  packages                                                         packages[]
+  probleme                                                         probleme[]
+  sav_ticket                                                       sav_ticket[]
+  scanned_doc                                                      scanned_doc[]
+  signature_image                                                  signature_image[]
+
+  @@index([customer_delivery_status], map: "IDX_169E6FB91E39DA08")
+  @@index([contact_arrivee_id], map: "IDX_169E6FB92D4927D5")
+  @@index([reception_status], map: "IDX_169E6FB93803CBDA")
+  @@index([administratif_status_id], map: "IDX_169E6FB93DB2E495")
+  @@index([vehicule_id], map: "IDX_169E6FB94A4A3511")
+  @@index([delivery_status], map: "IDX_169E6FB965119C92")
+  @@index([status_id], map: "IDX_169E6FB96BF700BD")
+  @@index([canal_prestation_service], map: "IDX_169E6FB96EEE9494")
+  @@index([commande_id], map: "IDX_169E6FB982EA2E54")
+  @@index([chauffeur_id], map: "IDX_169E6FB985C0B3BE")
+  @@index([tarification_details_id], map: "IDX_169E6FB991BACDC5")
+  @@index([contact_depart_id], map: "IDX_169E6FB9C0F3DD30")
+  @@index([adresse_depart], map: "IDX_169E6FB9D4EB6EE0")
+  @@index([adresse_arrivee], map: "IDX_169E6FB9E84B9E8B")
+  @@index([service_id], map: "IDX_169E6FB9ED5CA9E6")
+  @@index([code])
+  @@index([created_at], map: "createdAt_idx")
+  @@index([date_demarrage], map: "dateDemarrage_idx")
+  @@index([dropoff_end], map: "dropOffEnd_idx")
+  @@index([dropoff_start], map: "dropOffStart_idx")
+  @@index([factures], map: "factures_idx")
+}
+
+model course_administratif_status {
+  id                   Int                    @id @default(autoincrement())
+  color                String                 @db.VarChar(255)
+  sort                 Int?
+  code_situation       String                 @db.VarChar(50)
+  label_situation      String                 @db.VarChar(255)
+  code                 String                 @db.VarChar(255)
+  label                String                 @db.VarChar(255)
+  deleted_at           DateTime?              @db.DateTime(0)
+  administ_status_flow administ_status_flow[]
+  change_reasons       change_reasons[]
+  course               course[]
+}
+
+model course_attachment {
+  id                                                        Int                     @id @default(autoincrement())
+  course_id                                                 Int?
+  url                                                       String                  @db.VarChar(255)
+  created_at                                                DateTime                @db.DateTime(0)
+  updated_at                                                DateTime?               @db.DateTime(0)
+  picture_type                                              Int?
+  type                                                      course_attachment_type?
+  picture_type_course_attachment_picture_typeTopicture_type picture_type?           @relation("course_attachment_picture_typeTopicture_type", fields: [picture_type], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_A6BD9738333ED2BC")
+  course                                                    course?                 @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_A6BD9738591CC992")
+
+  @@index([picture_type], map: "IDX_A6BD9738333ED2BC")
+  @@index([course_id], map: "IDX_A6BD9738591CC992")
+}
+
+model course_creneau_log {
+  id               Int               @id @default(autoincrement())
+  zone_id          Int?
+  date_demarrage   DateTime          @db.Date
+  start_time       DateTime          @db.Time(0)
+  interval_time    Int
+  latitude         Float
+  longitude        Float
+  created_at       DateTime          @db.DateTime(0)
+  zones_chauffeurs zones_chauffeurs? @relation(fields: [zone_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_3FF22CE79F2C3FAB")
+
+  @@index([zone_id], map: "IDX_3FF22CE79F2C3FAB")
+  @@index([date_demarrage, zone_id], map: "course_creneau_index")
+}
+
+model course_date_demarrage_meta {
+  id              Int    @id @default(autoincrement())
+  course_id       Int    @unique(map: "UNIQ_1276710591CC992")
+  open_time       String @db.VarChar(255)
+  close_time      String @db.VarChar(255)
+  delivery_window Int
+  course          course @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_1276710591CC992")
+}
+
+model course_inner_notation {
+  id                  Int              @id @default(autoincrement())
+  course_id           Int
+  motif_fin_course_id Int
+  note                String?          @db.VarChar(255)
+  created_at          DateTime         @db.DateTime(0)
+  updated_at          DateTime?        @db.DateTime(0)
+  deleted_at          DateTime?        @db.DateTime(0)
+  course              course           @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_201405E6591CC992")
+  motif_fin_course    motif_fin_course @relation(fields: [motif_fin_course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_201405E69B83C516")
+
+  @@index([course_id], map: "IDX_201405E6591CC992")
+  @@index([motif_fin_course_id], map: "IDX_201405E69B83C516")
+}
+
+model courses_article_families {
+  course_id         Int
+  article_family_id Int
+  article_family    article_family @relation(fields: [article_family_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_8446D92A196B064E")
+  course            course         @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_8446D92A591CC992")
+
+  @@id([course_id, article_family_id])
+  @@index([article_family_id], map: "IDX_8446D92A196B064E")
+  @@index([course_id], map: "IDX_8446D92A591CC992")
+}
+
+model courses_articles {
+  course_id  Int
+  article_id Int
+  quantity   Int
+  course     course  @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_46DDD7FA591CC992")
+  article    article @relation(fields: [article_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_46DDD7FA7294869C")
+
+  @@id([course_id, article_id])
+  @@index([course_id], map: "IDX_46DDD7FA591CC992")
+  @@index([article_id], map: "IDX_46DDD7FA7294869C")
+}
+
+model courses_options {
+  course_id          Int
+  option_id          Int
+  quantity           Int
+  course             course             @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_690C071B591CC992")
+  canal_vente_option canal_vente_option @relation(fields: [option_id], references: [id], onUpdate: Restrict, map: "FK_690C071BA7C41D6F")
+
+  @@id([course_id, option_id])
+  @@index([option_id], map: "IDX_690C071BA7C41D6F")
+}
+
+model cron_job {
+  id                BigInt            @id @default(autoincrement()) @db.UnsignedBigInt
+  command           String            @db.VarChar(255)
+  description       String?           @db.VarChar(255)
+  number            Int               @default(1) @db.UnsignedInt
+  period            String            @db.VarChar(255)
+  last_use          DateTime?         @db.DateTime(0)
+  next_run          DateTime          @db.DateTime(0)
+  enable            Boolean           @default(true)
+  created_at        DateTime          @db.DateTime(0)
+  updated_at        DateTime          @db.DateTime(0)
+  arguments         String?           @db.VarChar(255)
+  running_instances Int               @default(0) @db.UnsignedInt
+  max_instances     Int               @default(1) @db.UnsignedInt
+  cron_job_result   cron_job_result[]
+}
+
+model cron_job_result {
+  id          BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  cron_job_id BigInt   @db.UnsignedBigInt
+  run_at      DateTime @db.DateTime(0)
+  run_time    Float
+  status_code Int
+  output      String?  @db.LongText
+  created_at  DateTime @db.DateTime(0)
+  updated_at  DateTime @db.DateTime(0)
+  cron_job    cron_job @relation(fields: [cron_job_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "FK_2CD346EE79099ED8")
+
+  @@index([cron_job_id], map: "IDX_2CD346EE79099ED8")
+}
+
+model day_of_week {
+  id                Int                 @id @default(autoincrement())
+  label             String              @db.VarChar(50)
+  code              String              @unique(map: "UNIQ_6A7917177153098") @db.VarChar(50)
+  operational_hours operational_hours[]
+}
+
+model delivery_pictures {
+  id         Int                     @id @default(autoincrement())
+  course_id  Int?
+  type       delivery_pictures_type?
+  url        String                  @db.VarChar(255)
+  created_at DateTime?               @db.DateTime(0)
+  updated_at DateTime?               @db.DateTime(0)
+  deleted_at DateTime?               @db.DateTime(0)
+  course     course?                 @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_EE1DCEAC591CC992")
+
+  @@index([course_id], map: "IDX_EE1DCEAC591CC992")
+}
+
+model delivery_status {
+  id                                                                           Int                     @id @default(autoincrement())
+  code                                                                         String                  @db.VarChar(255)
+  label                                                                        String                  @db.VarChar(100)
+  color                                                                        String                  @db.VarChar(20)
+  deleted_at                                                                   DateTime?               @db.DateTime(0)
+  created_at                                                                   DateTime?               @db.DateTime(0)
+  updated_at                                                                   DateTime?               @db.DateTime(0)
+  centiro_cdu_code                                                             String                  @db.VarChar(100)
+  centiro_cdu_description                                                      String                  @db.VarChar(100)
+  container_tracability_container_tracability_delivery_statusTodelivery_status container_tracability[] @relation("container_tracability_delivery_statusTodelivery_status")
+  course_course_customer_delivery_statusTodelivery_status                      course[]                @relation("course_customer_delivery_statusTodelivery_status")
+  course_course_reception_statusTodelivery_status                              course[]                @relation("course_reception_statusTodelivery_status")
+  course_course_delivery_statusTodelivery_status                               course[]                @relation("course_delivery_statusTodelivery_status")
+  groupe_tracability_groupe_tracability_delivery_statusTodelivery_status       groupe_tracability[]    @relation("groupe_tracability_delivery_statusTodelivery_status")
+  package_traceability_package_traceability_delivery_statusTodelivery_status   package_traceability[]  @relation("package_traceability_delivery_statusTodelivery_status")
+}
+
+model delta_cost {
+  id                                                    Int            @id @default(autoincrement())
+  collaborateur                                         Int?
+  reason                                                Int
+  created_at                                            DateTime       @db.DateTime(0)
+  updated_at                                            DateTime?      @db.DateTime(0)
+  montant                                               Float
+  commentaire                                           String         @db.VarChar(500)
+  MP_courseId                                           Int            @unique(map: "UNIQ_F298865EC5310ED6")
+  change_reasons                                        change_reasons @relation(fields: [reason], references: [id], onUpdate: Restrict, map: "FK_F298865E3BB8880C")
+  collaborateur_delta_cost_collaborateurTocollaborateur collaborateur? @relation("delta_cost_collaborateurTocollaborateur", fields: [collaborateur], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_F298865E770CBCD3")
+  course                                                course         @relation(fields: [MP_courseId], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_F298865EC5310ED6")
+
+  @@index([reason], map: "IDX_F298865E3BB8880C")
+  @@index([collaborateur], map: "IDX_F298865E770CBCD3")
+}
+
+model delta_cost_reasons {
+  id    Int                      @id @default(autoincrement())
+  label String                   @db.VarChar(500)
+  code  delta_cost_reasons_code?
+}
+
+model departement {
+  id                            Int                             @id @default(autoincrement())
+  region_name                   String                          @db.VarChar(255)
+  departement_name              String                          @db.VarChar(255)
+  zip_code_dep                  String                          @db.VarChar(255)
+  created_at                    DateTime                        @db.DateTime(0)
+  updated_at                    DateTime?                       @db.DateTime(0)
+  departement_operational_hours departement_operational_hours[]
+}
+
+model departement_operational_hours {
+  departement_id      Int
+  operational_hour_id Int
+  operational_hours   operational_hours @relation(fields: [operational_hour_id], references: [id], onUpdate: Restrict, map: "FK_DC19094D1D71189A")
+  departement         departement       @relation(fields: [departement_id], references: [id], onUpdate: Restrict, map: "FK_DC19094DCCF9E01E")
+
+  @@id([departement_id, operational_hour_id])
+  @@index([operational_hour_id], map: "IDX_DC19094D1D71189A")
+  @@index([departement_id], map: "IDX_DC19094DCCF9E01E")
+}
+
+model devis {
+  id         Int       @id @default(autoincrement())
+  code       String    @db.VarChar(255)
+  reference  String    @db.VarChar(255)
+  created_at DateTime  @db.DateTime(0)
+  deleted_at DateTime? @db.DateTime(0)
+  devis_url  String?   @db.VarChar(255)
+  commande   commande?
+}
+
+model doctrine_migration_versions {
+  version        String    @id
+  executed_at    DateTime? @db.DateTime(0)
+  execution_time Int?
+}
+
+model document {
+  id               Int            @id @default(autoincrement())
+  premium_id       Int?
+  chauffeur_id     Int?
+  vehicule_id      Int?
+  document_type_id Int?
+  s3_uri           String?        @db.VarChar(255)
+  file_name        String?        @db.VarChar(255)
+  deleted_at       DateTime?      @db.DateTime(0)
+  vehicule         vehicule?      @relation(fields: [vehicule_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_D8698A764A4A3511")
+  document_type    document_type? @relation(fields: [document_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_D8698A7661232A4F")
+  chauffeur        chauffeur?     @relation(fields: [chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_D8698A7685C0B3BE")
+  premium          premium?       @relation(fields: [premium_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_D8698A76F7798796")
+  scans            scans[]
+
+  @@index([vehicule_id], map: "IDX_D8698A764A4A3511")
+  @@index([document_type_id], map: "IDX_D8698A7661232A4F")
+  @@index([chauffeur_id], map: "IDX_D8698A7685C0B3BE")
+  @@index([premium_id], map: "IDX_D8698A76F7798796")
+}
+
+model document_type {
+  id         Int        @id @default(autoincrement())
+  code       String     @db.VarChar(255)
+  type       String     @db.VarChar(255)
+  deleted_at DateTime?  @db.DateTime(0)
+  document   document[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model driver_tmp {
+  Driver_id           Int
+  Driver_address      String @db.VarChar(255)
+  driver_address_lat  Float
+  driver_address_long Float
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model driver_warehouse_tmp {
+  chauffeur_id         Int
+  warehouse_adresse_id Int
+
+  @@ignore
+}
+
+model email {
+  id           Int       @id @default(autoincrement())
+  first_name   String?   @db.VarChar(255)
+  last_name    String?   @db.VarChar(255)
+  phone        String?   @db.VarChar(255)
+  destinataire String    @db.VarChar(255)
+  expediteur   String    @db.VarChar(255)
+  sujet        String    @db.VarChar(255)
+  corps        String    @db.LongText
+  piece_jointe String?   @db.VarChar(255)
+  type         String    @db.LongText
+  createdAt    DateTime  @db.DateTime(0)
+  deleted_at   DateTime? @db.DateTime(0)
+}
+
+model email_blacklist {
+  id                Int      @id @default(autoincrement())
+  email             String   @db.VarChar(255)
+  repeated_attempts Int
+  is_enabled        Boolean
+  created_at        DateTime @db.DateTime(0)
+  updated_at        DateTime @db.DateTime(0)
+}
+
+model extra_data {
+  id         Int       @id @default(autoincrement())
+  course_id  Int?
+  code       String    @db.VarChar(255)
+  label      String    @db.VarChar(255)
+  type       String    @db.VarChar(50)
+  options    String    @db.VarChar(50)
+  data       String?   @db.LongText
+  created_at DateTime? @db.DateTime(0)
+  deleted_at DateTime? @db.DateTime(0)
+  updated_at DateTime? @db.DateTime(0)
+  course     course?   @relation(fields: [course_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_398E307D591CC992")
+
+  @@index([course_id], map: "IDX_398E307D591CC992")
+}
+
+model facture {
+  id         Int       @id @default(autoincrement())
+  code       String    @db.VarChar(255)
+  reference  String    @db.VarChar(255)
+  created_at DateTime  @db.DateTime(0)
+  deleted_at DateTime? @db.DateTime(0)
+  commande   commande?
+}
+
+model formulaire_collaborateur {
+  id               Int                                       @id @default(autoincrement())
+  id_collaborateur Int?
+  created_at       DateTime?                                 @db.DateTime(0)
+  deleted_at       DateTime?                                 @db.DateTime(0)
+  type_formulaire  formulaire_collaborateur_type_formulaire?
+  payload          String                                    @db.LongText
+  collaborateur    collaborateur?                            @relation(fields: [id_collaborateur], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_E108C216C9246DB6")
+
+  @@index([id_collaborateur], map: "IDX_E108C216C9246DB6")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model freight_backup {
+  reception_number String    @db.VarChar(255)
+  reception_date   DateTime? @db.DateTime(0)
+
+  @@ignore
+}
+
+model freight_traceability {
+  id               Int            @id @default(autoincrement())
+  freight_id       Int?
+  collaborateur_id Int?
+  created_at       DateTime?      @db.DateTime(0)
+  status           String         @db.VarChar(255)
+  phase            String?        @db.VarChar(255)
+  freights         freights?      @relation(fields: [freight_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_C7BD1561A6ED787C")
+  collaborateur    collaborateur? @relation(fields: [collaborateur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_C7BD1561A848E3B1")
+
+  @@index([freight_id], map: "IDX_C7BD1561A6ED787C")
+  @@index([collaborateur_id], map: "IDX_C7BD1561A848E3B1")
+}
+
+model freights {
+  id                   Int                    @id @default(autoincrement())
+  reception_number     String?                @db.VarChar(255)
+  created_at           DateTime?              @db.DateTime(0)
+  reception_date       DateTime?              @db.DateTime(0)
+  freight_traceability freight_traceability[]
+  packages             packages[]
+
+  @@index([reception_number], map: "reception_number_idx")
+}
+
+model google_callback_traceability {
+  id            Int       @id @default(autoincrement())
+  message_id    String    @unique(map: "UNIQ_D4DE8835537A1329") @db.VarChar(50)
+  history_id    String    @db.VarChar(100)
+  attachment_id String?   @db.LongText
+  created_at    DateTime  @db.DateTime(0)
+  updated_at    DateTime? @db.DateTime(0)
+  deleted_at    DateTime? @db.DateTime(0)
+}
+
+model groupe {
+  id                 Int                  @id @default(autoincrement())
+  container_id       Int?
+  created_at         DateTime             @db.DateTime(0)
+  updated_at         DateTime?            @db.DateTime(0)
+  barcode            String               @db.VarChar(255)
+  type               String?              @db.VarChar(255)
+  idtype             String?              @db.VarChar(255)
+  groupe_ref         Int?
+  address            String?              @db.LongText
+  groupe             groupe?              @relation("groupeTogroupe", fields: [groupe_ref], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4B98C219BCFDC0E")
+  other_groupe       groupe[]             @relation("groupeTogroupe")
+  container          container?           @relation(fields: [container_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4B98C21BC21F742")
+  groupe_tracability groupe_tracability[]
+  packages           packages[]
+
+  @@index([groupe_ref], map: "IDX_4B98C219BCFDC0E")
+  @@index([container_id], map: "IDX_4B98C21BC21F742")
+  @@index([barcode], map: "barcode_idx")
+}
+
+model groupe_tracability {
+  id                                                                  Int              @id @default(autoincrement())
+  delivery_status                                                     Int?
+  groupe_id                                                           Int?
+  flashed_at                                                          DateTime?        @db.DateTime(0)
+  created_at                                                          DateTime?        @db.DateTime(0)
+  updated_at                                                          DateTime?        @db.DateTime(0)
+  deleted_at                                                          DateTime?        @db.DateTime(0)
+  litigation_id                                                       Int?             @unique(map: "UNIQ_E5C2B50B7CBE719")
+  collaborateur_id                                                    Int?
+  chauffeur_id                                                        Int?
+  step                                                                Int
+  delivery_status_groupe_tracability_delivery_statusTodelivery_status delivery_status? @relation("groupe_tracability_delivery_statusTodelivery_status", fields: [delivery_status], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_E5C2B50B65119C92")
+  groupe                                                              groupe?          @relation(fields: [groupe_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_E5C2B50B7A45358C")
+  litigation_groupe_tracability_litigation_idTolitigation             litigation?      @relation("groupe_tracability_litigation_idTolitigation", fields: [litigation_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_E5C2B50B7CBE719")
+  chauffeur                                                           chauffeur?       @relation(fields: [chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_E5C2B50B85C0B3BE")
+  collaborateur                                                       collaborateur?   @relation(fields: [collaborateur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_E5C2B50BA848E3B1")
+  litigation_litigation_groupe_tracabilityTogroupe_tracability        litigation?      @relation("litigation_groupe_tracabilityTogroupe_tracability")
+
+  @@index([delivery_status], map: "IDX_E5C2B50B65119C92")
+  @@index([groupe_id], map: "IDX_E5C2B50B7A45358C")
+  @@index([chauffeur_id], map: "IDX_E5C2B50B85C0B3BE")
+  @@index([collaborateur_id], map: "IDX_E5C2B50BA848E3B1")
+}
+
+model lettre_de_voiture {
+  id              Int       @id @default(autoincrement())
+  code            String    @db.VarChar(255)
+  reference       String    @db.VarChar(255)
+  immatriculation String?   @db.VarChar(255)
+  created_at      DateTime  @db.DateTime(0)
+  deleted_at      DateTime? @db.DateTime(0)
+  url             String?   @db.VarChar(255)
+  course          course?
+
+  @@index([code], map: "code_idx")
+}
+
+model line_type {
+  id                                     Int        @id @default(autoincrement())
+  code                                   String     @db.VarChar(255)
+  label                                  String     @db.VarChar(100)
+  color                                  String     @db.VarChar(100)
+  created_at                             DateTime   @db.DateTime(0)
+  updated_at                             DateTime?  @db.DateTime(0)
+  deleted_at                             DateTime?  @db.DateTime(0)
+  packages_packages_line_typeToline_type packages[] @relation("packages_line_typeToline_type")
+}
+
+model litigation {
+  id                                                                            Int                    @id @default(autoincrement())
+  type                                                                          Int?
+  reason                                                                        Int?
+  comment                                                                       String?                @db.VarChar(255)
+  created_at                                                                    DateTime               @db.DateTime(0)
+  deleted_at                                                                    DateTime?              @db.DateTime(0)
+  step                                                                          Int
+  package_traceability                                                          Int?                   @unique(map: "UNIQ_B432B06735A8C513")
+  groupe_tracability                                                            Int?                   @unique(map: "UNIQ_B432B067E5C2B50B")
+  container_tracability                                                         Int?                   @unique(map: "UNIQ_B432B067150CB8C4")
+  container_tracability_container_tracability_litigation_idTolitigation         container_tracability? @relation("container_tracability_litigation_idTolitigation")
+  groupe_tracability_groupe_tracability_litigation_idTolitigation               groupe_tracability?    @relation("groupe_tracability_litigation_idTolitigation")
+  container_tracability_litigation_container_tracabilityTocontainer_tracability container_tracability? @relation("litigation_container_tracabilityTocontainer_tracability", fields: [container_tracability], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_B432B067150CB8C4")
+  package_traceability_litigation_package_traceabilityTopackage_traceability    package_traceability?  @relation("litigation_package_traceabilityTopackage_traceability", fields: [package_traceability], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_B432B06735A8C513")
+  litigation_status                                                             litigation_status?     @relation(fields: [reason], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_B432B0673BB8880C")
+  responsible                                                                   responsible?           @relation(fields: [type], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_B432B0678CDE5729")
+  groupe_tracability_litigation_groupe_tracabilityTogroupe_tracability          groupe_tracability?    @relation("litigation_groupe_tracabilityTogroupe_tracability", fields: [groupe_tracability], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_B432B067E5C2B50B")
+  litigation_pictures                                                           litigation_pictures[]
+  package_traceability_package_traceability_litigation_idTolitigation           package_traceability?  @relation("package_traceability_litigation_idTolitigation")
+
+  @@index([reason], map: "IDX_B432B0673BB8880C")
+  @@index([type], map: "IDX_B432B0678CDE5729")
+}
+
+model litigation_pictures {
+  id            Int         @id @default(autoincrement())
+  litigation_id Int?
+  url           String      @db.VarChar(255)
+  created_at    DateTime    @db.DateTime(0)
+  updated_at    DateTime?   @db.DateTime(0)
+  litigation    litigation? @relation(fields: [litigation_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_F1EFB5727CBE719")
+
+  @@index([litigation_id], map: "IDX_F1EFB5727CBE719")
+}
+
+model litigation_status {
+  id         Int          @id @default(autoincrement())
+  code       String       @db.VarChar(255)
+  label      String       @db.VarChar(100)
+  created_at DateTime     @db.DateTime(0)
+  updated_at DateTime?    @db.DateTime(0)
+  deleted_at DateTime?    @db.DateTime(0)
+  litigation litigation[]
+}
+
+model log {
+  id                 Int              @id @default(autoincrement())
+  collaborateur_id   Int?
+  entity             String           @db.VarChar(255)
+  entity_id          Int
+  column_name        String           @db.VarChar(255)
+  old_value          String?          @db.LongText
+  new_value          String?          @db.LongText
+  created_at         DateTime         @db.DateTime(0)
+  updated_at         DateTime?        @db.DateTime(0)
+  reason             String?          @db.LongText
+  chauffeur_id       Int?
+  client_id          Int?
+  partenaire_id      Int?
+  contact_arrivee_id Int?
+  changeSource       String?          @db.LongText
+  client             client?          @relation(fields: [client_id], references: [id], onUpdate: Restrict, map: "FK_8F3F68C519EB6921")
+  contact_arrivee    contact_arrivee? @relation(fields: [contact_arrivee_id], references: [id], onUpdate: Restrict, map: "FK_8F3F68C52D4927D5")
+  chauffeur          chauffeur?       @relation(fields: [chauffeur_id], references: [id], onUpdate: Restrict, map: "FK_8F3F68C585C0B3BE")
+  partenaire         partenaire?      @relation(fields: [partenaire_id], references: [id], onUpdate: Restrict, map: "FK_8F3F68C598DE13AC")
+  collaborateur      collaborateur?   @relation(fields: [collaborateur_id], references: [id], onUpdate: Restrict, map: "FK_8F3F68C5A848E3B1")
+
+  @@index([client_id], map: "IDX_8F3F68C519EB6921")
+  @@index([contact_arrivee_id], map: "IDX_8F3F68C52D4927D5")
+  @@index([chauffeur_id], map: "IDX_8F3F68C585C0B3BE")
+  @@index([partenaire_id], map: "IDX_8F3F68C598DE13AC")
+  @@index([collaborateur_id], map: "IDX_8F3F68C5A848E3B1")
+  @@index([created_at], map: "createdAt_idx")
+  @@index([entity_id], map: "entityId_idx")
+}
+
+model log_partenaire {
+  id               Int       @id @default(autoincrement())
+  api_request      String?   @db.VarChar(255)
+  data_request     String?   @db.LongText
+  response_request String?   @db.LongText
+  remote_addr      String?   @db.VarChar(255)
+  date_request     DateTime? @db.DateTime(0)
+}
+
+model logistic_status_flow {
+  id                 Int              @id @default(autoincrement())
+  course_id          Int?
+  code_situ          Int?
+  code_justi         Int?
+  collaborateur_id   Int?
+  chauffeur_id       Int?
+  client_id          Int?
+  partenaire_id      Int?
+  contact_arrivee_id Int?
+  reason             String?          @db.LongText
+  created_at         DateTime         @db.DateTime(0)
+  updated_at         DateTime?        @db.DateTime(0)
+  scanlog_version    String?          @db.LongText
+  client             client?          @relation(fields: [client_id], references: [id], onUpdate: Restrict, map: "FK_6BD03AC619EB6921")
+  contact_arrivee    contact_arrivee? @relation(fields: [contact_arrivee_id], references: [id], onUpdate: Restrict, map: "FK_6BD03AC62D4927D5")
+  status_course      status_course?   @relation(fields: [code_situ], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6BD03AC6421F7341")
+  course             course?          @relation(fields: [course_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6BD03AC6591CC992")
+  chauffeur          chauffeur?       @relation(fields: [chauffeur_id], references: [id], onUpdate: Restrict, map: "FK_6BD03AC685C0B3BE")
+  change_reasons     change_reasons?  @relation(fields: [code_justi], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_6BD03AC68C9E6214")
+  partenaire         partenaire?      @relation(fields: [partenaire_id], references: [id], onUpdate: Restrict, map: "FK_6BD03AC698DE13AC")
+  collaborateur      collaborateur?   @relation(fields: [collaborateur_id], references: [id], onUpdate: Restrict, map: "FK_6BD03AC6A848E3B1")
+
+  @@index([client_id], map: "IDX_6BD03AC619EB6921")
+  @@index([contact_arrivee_id], map: "IDX_6BD03AC62D4927D5")
+  @@index([code_situ], map: "IDX_6BD03AC6421F7341")
+  @@index([course_id], map: "IDX_6BD03AC6591CC992")
+  @@index([chauffeur_id], map: "IDX_6BD03AC685C0B3BE")
+  @@index([code_justi], map: "IDX_6BD03AC68C9E6214")
+  @@index([partenaire_id], map: "IDX_6BD03AC698DE13AC")
+  @@index([collaborateur_id], map: "IDX_6BD03AC6A848E3B1")
+}
+
+model mailing_list {
+  id         Int      @id @default(autoincrement())
+  firstname  String?  @db.VarChar(255)
+  lastname   String?  @db.VarChar(255)
+  mail       String   @unique(map: "UNIQ_15C473AF5126AC48") @db.VarChar(255)
+  source     String?  @db.VarChar(255)
+  created_at DateTime @db.DateTime(0)
+}
+
+model motif_fin_course {
+  id                    Int                     @id @default(autoincrement())
+  code                  String                  @unique(map: "UNIQ_713A81277153098") @db.VarChar(255)
+  label                 String                  @unique(map: "UNIQ_713A812EA750E8") @db.VarChar(255)
+  created_at            DateTime                @db.DateTime(0)
+  deleted_at            DateTime?               @db.DateTime(0)
+  course_inner_notation course_inner_notation[]
+}
+
+model operational_hours {
+  id                               Int                                @id @default(autoincrement())
+  day_of_week_id                   Int?
+  open_time                        String                             @db.VarChar(255)
+  close_time                       String                             @db.VarChar(255)
+  delivery_window                  Int?
+  canal_vente_operational_hours    canal_vente_operational_hours[]
+  chauffeur_operational_hours      chauffeur_operational_hours[]
+  city_operational_hours           city_operational_hours[]
+  departement_operational_hours    departement_operational_hours[]
+  day_of_week                      day_of_week?                       @relation(fields: [day_of_week_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_531CC8DF139A4A41")
+  pickup_address_operational_hours pickup_address_operational_hours[]
+  warehouse_operational_hours      warehouse_operational_hours[]
+
+  @@index([day_of_week_id], map: "IDX_531CC8DF139A4A41")
+}
+
+model package_traceability {
+  id                                                                    Int                               @id @default(autoincrement())
+  package_id                                                            Int?
+  delivery_status                                                       Int?
+  litigation_id                                                         Int?                              @unique(map: "UNIQ_35A8C5137CBE719")
+  flashed_at                                                            DateTime?                         @db.DateTime(0)
+  step                                                                  Int
+  created_at                                                            DateTime?                         @db.DateTime(0)
+  updated_at                                                            DateTime?                         @db.DateTime(0)
+  deleted_at                                                            DateTime?                         @db.DateTime(0)
+  collaborateur_id                                                      Int?
+  chauffeur_id                                                          Int?
+  source                                                                package_traceability_source?
+  code_rayon                                                            String?                           @db.VarChar(255)
+  comment                                                               String?                           @db.LongText
+  litigation_litigation_package_traceabilityTopackage_traceability      litigation?                       @relation("litigation_package_traceabilityTopackage_traceability")
+  delivery_status_package_traceability_delivery_statusTodelivery_status delivery_status?                  @relation("package_traceability_delivery_statusTodelivery_status", fields: [delivery_status], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_35A8C51365119C92")
+  litigation_package_traceability_litigation_idTolitigation             litigation?                       @relation("package_traceability_litigation_idTolitigation", fields: [litigation_id], references: [id], onUpdate: Restrict, map: "FK_35A8C5137CBE719")
+  chauffeur                                                             chauffeur?                        @relation(fields: [chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_35A8C51385C0B3BE")
+  collaborateur                                                         collaborateur?                    @relation(fields: [collaborateur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_35A8C513A848E3B1")
+  packages                                                              packages?                         @relation(fields: [package_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_35A8C513F44CABFF")
+  package_traceability_attachment                                       package_traceability_attachment[]
+
+  @@index([delivery_status], map: "IDX_35A8C51365119C92")
+  @@index([chauffeur_id], map: "IDX_35A8C51385C0B3BE")
+  @@index([collaborateur_id], map: "IDX_35A8C513A848E3B1")
+  @@index([package_id], map: "IDX_35A8C513F44CABFF")
+}
+
+model package_traceability_attachment {
+  id                     Int                   @id @default(autoincrement())
+  url                    String                @db.VarChar(255)
+  picture_type           String?               @db.VarChar(255)
+  created_at             DateTime              @db.DateTime(0)
+  updated_at             DateTime?             @db.DateTime(0)
+  packageTraceability_id Int?
+  package_traceability   package_traceability? @relation(fields: [packageTraceability_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "FK_21C73301278ED994")
+
+  @@index([packageTraceability_id], map: "IDX_21C73301278ED994")
+}
+
+model packages {
+  id                                      Int                         @id @default(autoincrement())
+  course_id                               Int?
+  line_type                               Int?
+  code                                    String                      @db.VarChar(255)
+  last_msg_id                             String?                     @db.VarChar(2)
+  sequence_number                         Int?
+  store_number                            String?                     @db.VarChar(10)
+  store_cmd_number                        String?                     @db.VarChar(10)
+  quantity                                Decimal?                    @db.Decimal(10, 0)
+  label                                   String?                     @db.VarChar(255)
+  created_at                              DateTime                    @db.DateTime(0)
+  deleted_at                              DateTime?                   @db.DateTime(0)
+  barcode                                 String                      @db.VarChar(255)
+  traceability_type                       packages_traceability_type?
+  flashed_at                              DateTime?                   @db.DateTime(0)
+  reception_number                        String?                     @db.VarChar(255)
+  supplier                                String?                     @db.VarChar(255)
+  warehouse_id                            Int?
+  address                                 String?                     @db.LongText
+  groupe_id                               Int?
+  reception_type                          String?                     @db.VarChar(255)
+  freight_id                              Int?
+  length                                  String?                     @db.VarChar(10)
+  width                                   String?                     @db.VarChar(10)
+  height                                  String?                     @db.VarChar(10)
+  volume                                  String?                     @db.VarChar(20)
+  weight                                  String?                     @db.VarChar(10)
+  package_traceability                    package_traceability[]
+  warehouse                               warehouse?                  @relation(fields: [warehouse_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_9BB5C0A75080ECDE")
+  course                                  course?                     @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_9BB5C0A7591CC992")
+  line_type_packages_line_typeToline_type line_type?                  @relation("packages_line_typeToline_type", fields: [line_type], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_9BB5C0A7793A4F0")
+  groupe                                  groupe?                     @relation(fields: [groupe_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_9BB5C0A77A45358C")
+  freights                                freights?                   @relation(fields: [freight_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_9BB5C0A7A6ED787C")
+  products                                products[]
+
+  @@index([warehouse_id], map: "IDX_9BB5C0A75080ECDE")
+  @@index([course_id], map: "IDX_9BB5C0A7591CC992")
+  @@index([line_type], map: "IDX_9BB5C0A7793A4F0")
+  @@index([groupe_id], map: "IDX_9BB5C0A77A45358C")
+  @@index([freight_id], map: "IDX_9BB5C0A7A6ED787C")
+  @@index([barcode], map: "barcode_idx")
+  @@index([code], map: "code_idx")
+}
+
+model parameters {
+  id         Int       @id @default(autoincrement())
+  code       String?   @db.VarChar(255)
+  label      String?   @db.VarChar(255)
+  value      String?   @db.VarChar(255)
+  deleted_at DateTime? @db.DateTime(0)
+}
+
+model partenaire {
+  id                   Int                    @id @default(autoincrement())
+  login                String                 @db.VarChar(255)
+  password             String                 @db.VarChar(255)
+  mail                 String?                @db.VarChar(255)
+  timezone             String                 @default("Europe/Paris") @db.VarChar(255)
+  auth_token           auth_token[]
+  log                  log[]
+  logistic_status_flow logistic_status_flow[]
+}
+
+model partner_service {
+  id                       Int                        @id @default(autoincrement())
+  code                     String                     @db.VarChar(255)
+  label                    String                     @db.VarChar(100)
+  deleted_at               DateTime?                  @db.DateTime(0)
+  created_at               DateTime?                  @db.DateTime(0)
+  updated_at               DateTime?                  @db.DateTime(0)
+  canal_vente_option       canal_vente_option[]
+  prestation_canal_service prestation_canal_service[]
+}
+
+model pickup_address_operational_hours {
+  pickup_address_id   Int
+  operational_hour_id Int
+  operational_hours   operational_hours @relation(fields: [operational_hour_id], references: [id], onUpdate: Restrict, map: "FK_B88EC6EB1D71189A")
+  adresse_enrichie    adresse_enrichie  @relation(fields: [pickup_address_id], references: [id], onUpdate: Restrict, map: "FK_B88EC6EBA72D874B")
+
+  @@id([pickup_address_id, operational_hour_id])
+  @@index([operational_hour_id], map: "IDX_B88EC6EB1D71189A")
+  @@index([pickup_address_id], map: "IDX_B88EC6EBA72D874B")
+}
+
+model picture_type {
+  id                                                             Int                         @id @default(autoincrement())
+  picture_label                                                  String?                     @db.VarChar(255)
+  nb_required                                                    Int?
+  nb_max                                                         Int?
+  created_at                                                     DateTime?                   @db.DateTime(0)
+  updated_at                                                     DateTime?                   @db.DateTime(0)
+  deleted_at                                                     DateTime?                   @db.DateTime(0)
+  picture_code                                                   String?                     @db.VarChar(255)
+  canal_vente_picture_types                                      canal_vente_picture_types[]
+  course_attachment_course_attachment_picture_typeTopicture_type course_attachment[]         @relation("course_attachment_picture_typeTopicture_type")
+}
+
+model premium {
+  id               Int        @id @default(autoincrement())
+  nom_societe      String     @db.VarChar(255)
+  address          String     @db.VarChar(255)
+  phone            String     @db.VarChar(255)
+  mail             String     @db.VarChar(255)
+  nom_dirigeant    String?    @db.VarChar(255)
+  prenom_dirigeant String?    @db.VarChar(255)
+  deleted_at       DateTime?  @db.DateTime(0)
+  chauffeur        chauffeur?
+  document         document[]
+}
+
+model prestation_canal_service {
+  id              Int              @id @default(autoincrement())
+  canal_vente_id  Int
+  prestation_id   Int
+  service_id      Int?
+  label           String?          @db.VarChar(255)
+  course          course[]
+  services        services         @relation(fields: [prestation_id], references: [id], onUpdate: Restrict, map: "FK_47A22F149E45C554")
+  canal_vente     canal_vente      @relation(fields: [canal_vente_id], references: [id], onUpdate: Restrict, map: "FK_47A22F14DC8E843A")
+  partner_service partner_service? @relation(fields: [service_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_47A22F14ED5CA9E6")
+
+  @@unique([canal_vente_id, prestation_id, service_id], map: "keys_unique")
+  @@index([prestation_id], map: "IDX_47A22F149E45C554")
+  @@index([canal_vente_id], map: "IDX_47A22F14DC8E843A")
+  @@index([service_id], map: "IDX_47A22F14ED5CA9E6")
+}
+
+model pricingrules {
+  id               Int            @id @default(autoincrement())
+  collaborateur_id Int?
+  code             String         @db.VarChar(254)
+  created_at       DateTime       @db.DateTime(0)
+  updated_at       DateTime?      @db.DateTime(0)
+  deleted_at       DateTime?      @db.DateTime(0)
+  name             String         @db.VarChar(255)
+  input            String?        @db.LongText
+  const            String?        @db.LongText
+  rule             String?        @db.LongText
+  canal_vente      canal_vente[]
+  collaborateur    collaborateur? @relation(fields: [collaborateur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_FFA9E399A848E3B1")
+
+  @@index([collaborateur_id], map: "IDX_FFA9E399A848E3B1")
+}
+
+model probleme {
+  id                Int       @id @default(autoincrement())
+  client_id         Int?
+  code              String    @unique(map: "UNIQ_7AB2D71477153098") @db.VarChar(255)
+  ref               String    @unique(map: "UNIQ_7AB2D714146F3EA3") @db.VarChar(255)
+  commentaire       String    @db.LongText
+  created_at        DateTime  @db.DateTime(0)
+  related_course_id Int?
+  deleted_at        DateTime? @db.DateTime(0)
+  client            client?   @relation(fields: [client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7AB2D71419EB6921")
+  course            course?   @relation(fields: [related_course_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7AB2D714F1DD9589")
+
+  @@index([client_id], map: "IDX_7AB2D71419EB6921")
+  @@index([related_course_id], map: "IDX_7AB2D714F1DD9589")
+}
+
+model products {
+  id         Int                @id @default(autoincrement())
+  package_id Int?
+  code       String             @db.VarChar(255)
+  label      String?            @db.VarChar(255)
+  volume     Float?
+  weight     Float?
+  typology   products_typology?
+  created_at DateTime           @db.DateTime(0)
+  deleted_at DateTime?          @db.DateTime(0)
+  state      products_state?
+  age        String?            @db.VarChar(255)
+  packages   packages?          @relation(fields: [package_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_B3BA5A5AF44CABFF")
+
+  @@index([package_id], map: "IDX_B3BA5A5AF44CABFF")
+  @@index([code], map: "code_idx")
+}
+
+model promotion {
+  id             Int                       @id @default(autoincrement())
+  code_promo     String                    @unique(map: "UNIQ_C11D7DD15C4683B7") @db.VarChar(255)
+  reduction      String                    @db.VarChar(255)
+  date_fin       DateTime?                 @db.DateTime(0)
+  quantite       Int
+  type_reduction promotion_type_reduction?
+  deleted_at     DateTime?                 @db.DateTime(0)
+  commande       commande[]
+}
+
+model responsible {
+  id         Int          @id @default(autoincrement())
+  code       String       @db.VarChar(255)
+  label      String       @db.VarChar(100)
+  created_at DateTime     @db.DateTime(0)
+  updated_at DateTime?    @db.DateTime(0)
+  deleted_at DateTime?    @db.DateTime(0)
+  litigation litigation[]
+}
+
+model reverse {
+  id                Int                 @id @default(autoincrement())
+  collaborateur_id  Int?
+  transporter_id    Int?
+  warehouse_id      Int?
+  flow              String?             @db.VarChar(255)
+  created_at        DateTime?           @db.DateTime(0)
+  date_reverse      DateTime?           @db.DateTime(0)
+  name_reverse      String?             @db.VarChar(255)
+  statut            reverse_statut?
+  transporters      transporters?       @relation(fields: [transporter_id], references: [id], onUpdate: Restrict, map: "FK_AA7791174F335C8B")
+  warehouse         warehouse?          @relation(fields: [warehouse_id], references: [id], onUpdate: Restrict, map: "FK_AA7791175080ECDE")
+  collaborateur     collaborateur?      @relation(fields: [collaborateur_id], references: [id], onUpdate: Restrict, map: "FK_AA779117A848E3B1")
+  reverse_container reverse_container[]
+  reverse_pictures  reverse_pictures[]
+  signature_image   signature_image[]
+
+  @@index([transporter_id], map: "IDX_AA7791174F335C8B")
+  @@index([warehouse_id], map: "IDX_AA7791175080ECDE")
+  @@index([collaborateur_id], map: "IDX_AA779117A848E3B1")
+}
+
+model reverse_container {
+  reverse_id   Int
+  container_id Int
+  container    container @relation(fields: [container_id], references: [id], onUpdate: Restrict, map: "FK_D7EC9543BC21F742")
+  reverse      reverse   @relation(fields: [reverse_id], references: [id], onUpdate: Restrict, map: "FK_D7EC9543D9132FAB")
+
+  @@id([reverse_id, container_id])
+  @@index([container_id], map: "IDX_D7EC9543BC21F742")
+  @@index([reverse_id], map: "IDX_D7EC9543D9132FAB")
+}
+
+model reverse_pictures {
+  id           Int                    @id @default(autoincrement())
+  reverse_id   Int?
+  container_id Int?
+  type         reverse_pictures_type?
+  url          String                 @db.VarChar(255)
+  created_at   DateTime?              @db.DateTime(0)
+  updated_at   DateTime?              @db.DateTime(0)
+  deleted_at   DateTime?              @db.DateTime(0)
+  container    container?             @relation(fields: [container_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_1B7F2D5ABC21F742")
+  reverse      reverse?               @relation(fields: [reverse_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_1B7F2D5AD9132FAB")
+
+  @@index([container_id], map: "IDX_1B7F2D5ABC21F742")
+  @@index([reverse_id], map: "IDX_1B7F2D5AD9132FAB")
+}
+
+model sav_ticket {
+  id                 Int                 @id @default(autoincrement())
+  course_id          Int?
+  created_at         DateTime            @db.DateTime(0)
+  updated_at         DateTime?           @db.DateTime(0)
+  deleted_at         DateTime?           @db.DateTime(0)
+  ticket_option_id   Int?
+  collaborateur_id   Int?
+  ticket_data_id     Int?
+  ticket_status      Int
+  lettre_de_voiture  String?             @db.VarChar(255)
+  pointage           Int
+  closed_at          DateTime?           @db.DateTime(0)
+  assembly_id        Int?
+  sav_ticket_data    sav_ticket_data?    @relation(fields: [ticket_data_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_2C2CCE433B39F86E")
+  sav_ticket_options sav_ticket_options? @relation(fields: [ticket_option_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_2C2CCE433DFEC725")
+  course             course?             @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_2C2CCE43591CC992")
+  collaborateur      collaborateur?      @relation(fields: [collaborateur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_2C2CCE43A848E3B1")
+  assembly           assembly?           @relation(fields: [assembly_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_2C2CCE43CA2E7D4C")
+
+  @@index([ticket_data_id], map: "IDX_2C2CCE433B39F86E")
+  @@index([ticket_option_id], map: "IDX_2C2CCE433DFEC725")
+  @@index([course_id], map: "IDX_2C2CCE43591CC992")
+  @@index([collaborateur_id], map: "IDX_2C2CCE43A848E3B1")
+  @@index([assembly_id], map: "IDX_2C2CCE43CA2E7D4C")
+}
+
+model sav_ticket_attachment {
+  id              Int              @id @default(autoincrement())
+  ticket_data_id  Int?
+  url             String?          @db.VarChar(255)
+  created_at      DateTime         @db.DateTime(0)
+  updated_at      DateTime?        @db.DateTime(0)
+  deleted_at      DateTime?        @db.DateTime(0)
+  sav_ticket_data sav_ticket_data? @relation(fields: [ticket_data_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_F9D46E913B39F86E")
+
+  @@index([ticket_data_id], map: "IDX_F9D46E913B39F86E")
+}
+
+model sav_ticket_data {
+  id                                                                    Int                            @id @default(autoincrement())
+  course_payment_method_id                                              Int?
+  payment_method_id                                                     Int?
+  commentaire                                                           String?                        @db.VarChar(255)
+  montant_ttc                                                           Float?
+  montant_ht                                                            Float?
+  iban                                                                  String?                        @db.VarChar(50)
+  dedommager                                                            Boolean?
+  montant_prestataire_ht                                                Float?
+  montant_prestataire_ttc                                               Float?
+  prise_en_charge_chauffeur                                             Boolean?
+  type_reclamation                                                      String?                        @db.VarChar(50)
+  nature_penalite_chauffeur                                             String?                        @db.VarChar(255)
+  choix_imputer_societe                                                 Boolean?
+  nom_societe                                                           String?                        @db.VarChar(50)
+  nom_chauffeur                                                         String?                        @db.VarChar(50)
+  agent                                                                 String?                        @db.VarChar(50)
+  email_agent                                                           String?                        @db.VarChar(50)
+  created_at                                                            DateTime                       @db.DateTime(0)
+  updated_at                                                            DateTime?                      @db.DateTime(0)
+  deleted_at                                                            DateTime?                      @db.DateTime(0)
+  ancien_statut_course                                                  Int?
+  involved_agent                                                        String?                        @db.VarChar(50)
+  involved_team                                                         sav_ticket_data_involved_team?
+  montant_facturation_prestataire_ht                                    Float?                         @default(0)
+  sav_ticket                                                            sav_ticket[]
+  sav_ticket_attachment                                                 sav_ticket_attachment[]
+  type_paiement_sav_ticket_data_payment_method_idTotype_paiement        type_paiement?                 @relation("sav_ticket_data_payment_method_idTotype_paiement", fields: [payment_method_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7171ECFE5AA1164F")
+  status_course                                                         status_course?                 @relation(fields: [ancien_statut_course], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7171ECFE96F6E09E")
+  type_paiement_sav_ticket_data_course_payment_method_idTotype_paiement type_paiement?                 @relation("sav_ticket_data_course_payment_method_idTotype_paiement", fields: [course_payment_method_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_7171ECFEFA2EB04C")
+
+  @@index([payment_method_id], map: "IDX_7171ECFE5AA1164F")
+  @@index([ancien_statut_course], map: "IDX_7171ECFE96F6E09E")
+  @@index([course_payment_method_id], map: "IDX_7171ECFEFA2EB04C")
+}
+
+model sav_ticket_options {
+  id          Int          @id @default(autoincrement())
+  code        String       @unique(map: "UNIQ_EB123D6A77153098") @db.VarChar(255)
+  value       String       @db.VarChar(255)
+  description String?      @db.VarChar(255)
+  created_at  DateTime     @db.DateTime(0)
+  updated_at  DateTime?    @db.DateTime(0)
+  deleted_at  DateTime?    @db.DateTime(0)
+  sav_ticket  sav_ticket[]
+}
+
+model scanned_doc {
+  id         Int       @id @default(autoincrement())
+  course_id  Int?
+  url        String    @db.VarChar(255)
+  created_at DateTime? @db.DateTime(0)
+  updated_at DateTime? @db.DateTime(0)
+  deleted_at DateTime? @db.DateTime(0)
+  course     course?   @relation(fields: [course_id], references: [id], onUpdate: Restrict, map: "FK_BD825E5D591CC992")
+
+  @@index([course_id], map: "IDX_BD825E5D591CC992")
+}
+
+model scans {
+  id          Int       @id @default(autoincrement())
+  document_id Int?
+  label       String    @db.VarChar(255)
+  url         String    @db.VarChar(255)
+  deleted_at  DateTime? @db.DateTime(0)
+  document    document? @relation(fields: [document_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_2AA4F257C33F7837")
+
+  @@index([document_id], map: "IDX_2AA4F257C33F7837")
+}
+
+model services {
+  id                        Int                         @id @default(autoincrement())
+  label                     String                      @db.VarChar(255)
+  default_vehicule_type_id  String                      @db.VarChar(255)
+  description               String                      @db.LongText
+  canal_vente_config        canal_vente_config[]
+  chauffeur_prestations     chauffeur_prestations[]
+  collaborateur_prestations collaborateur_prestations[]
+  course                    course[]
+  prestation_canal_service  prestation_canal_service[]
+}
+
+model signature_image {
+  id         Int                   @id @default(autoincrement())
+  course_id  Int?
+  type       signature_image_type?
+  url        String                @db.VarChar(255)
+  created_at DateTime?             @db.DateTime(0)
+  updated_at DateTime?             @db.DateTime(0)
+  deleted_at DateTime?             @db.DateTime(0)
+  signataire String?               @db.VarChar(255)
+  reverse_id Int?
+  course     course?               @relation(fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_4D6AF604591CC992")
+  reverse    reverse?              @relation(fields: [reverse_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_4D6AF604D9132FAB")
+
+  @@index([course_id], map: "IDX_4D6AF604591CC992")
+  @@index([reverse_id], map: "IDX_4D6AF604D9132FAB")
+}
+
+model societe {
+  id                 Int          @id @default(autoincrement())
+  name               String       @db.VarChar(255)
+  siret              String?      @db.VarChar(25)
+  address            String?      @db.VarChar(255)
+  city               String?      @db.VarChar(255)
+  zip                Int?
+  code_tva           String?      @db.VarChar(255)
+  deleted_at         DateTime?    @db.DateTime(0)
+  can_billed_monthly Boolean?
+  canal_vente_id     Int?
+  client             client[]
+  canal_vente        canal_vente? @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_19653DBDDC8E843A")
+
+  @@index([canal_vente_id], map: "IDX_19653DBDDC8E843A")
+}
+
+model status_course {
+  id                              Int                    @id @default(autoincrement())
+  color                           String                 @db.VarChar(255)
+  sort                            Int?
+  code                            String                 @db.VarChar(255)
+  label                           String                 @db.VarChar(255)
+  deleted_at                      DateTime?              @db.DateTime(0)
+  centiro_tsp_code                String?                @db.VarChar(255)
+  centiro_return_tsp_code         String?                @db.VarChar(255)
+  centiro_code_description        String?                @db.VarChar(255)
+  centiro_return_code_description String?                @db.VarChar(255)
+  code_situation                  String                 @db.VarChar(50)
+  label_situation                 String                 @db.VarChar(255)
+  change_reasons                  change_reasons[]
+  course                          course[]
+  logistic_status_flow            logistic_status_flow[]
+  sav_ticket_data                 sav_ticket_data[]
+}
+
+model sub_category {
+  id               Int            @id @default(autoincrement())
+  categorie_id     Int?
+  collaborateur_id Int?
+  code             String         @db.VarChar(255)
+  label            String         @db.VarChar(255)
+  deleted_at       DateTime?      @db.DateTime(0)
+  collaborateur    collaborateur? @relation(fields: [collaborateur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_BCE3F798A848E3B1")
+  category         category?      @relation(fields: [categorie_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_BCE3F798BCF5E72D")
+
+  @@index([collaborateur_id], map: "IDX_BCE3F798A848E3B1")
+  @@index([categorie_id], map: "IDX_BCE3F798BCF5E72D")
+}
+
+model system_versioning {
+  id          Int                         @id @default(autoincrement())
+  platform    system_versioning_platform?
+  target      system_versioning_target?
+  version     String                      @db.VarChar(255)
+  created_at  DateTime?                   @db.DateTime(0)
+  deleted_at  DateTime?                   @db.DateTime(0)
+  is_critical Boolean                     @default(false)
+}
+
+model tarification_details {
+  id                           Int                                 @id @default(autoincrement())
+  vehicule_category_id         Int?
+  code                         String                              @db.VarChar(255)
+  label                        String                              @db.VarChar(255)
+  value                        String                              @db.VarChar(255)
+  deleted_at                   DateTime?                           @db.DateTime(0)
+  canal_vente_id               Int?
+  condition                    Decimal?                            @db.Decimal(10, 0)
+  radius_km                    Decimal?                            @db.Decimal(10, 0)
+  additional_price_per_km      Float?
+  additional_price_manutention Float?
+  value_next_day               String?                             @db.VarChar(255)
+  order_service                tarification_details_order_service?
+  enabled                      Boolean
+  course                       course[]
+  vehicule_category            vehicule_category?                  @relation(fields: [vehicule_category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4AEA203554733C01")
+  canal_vente                  canal_vente?                        @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_4AEA2035DC8E843A")
+
+  @@index([vehicule_category_id], map: "IDX_4AEA203554733C01")
+  @@index([canal_vente_id], map: "IDX_4AEA2035DC8E843A")
+}
+
+model tarification_details_client_pro {
+  id                   Int                @id @default(autoincrement())
+  vehicule_category_id Int?
+  client_id            Int?
+  code                 String             @db.VarChar(255)
+  label                String             @db.VarChar(255)
+  value                String             @db.VarChar(255)
+  condition_km         Decimal?           @db.Decimal(10, 0)
+  deleted_at           DateTime?          @db.DateTime(0)
+  client               client?            @relation(fields: [client_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_2E7E84FD19EB6921")
+  vehicule_category    vehicule_category? @relation(fields: [vehicule_category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_2E7E84FD54733C01")
+
+  @@index([client_id], map: "IDX_2E7E84FD19EB6921")
+  @@index([vehicule_category_id], map: "IDX_2E7E84FD54733C01")
+}
+
+model transporters {
+  id        Int       @id @default(autoincrement())
+  firstname String    @db.VarChar(255)
+  lastname  String    @db.VarChar(100)
+  reverse   reverse[]
+}
+
+model type_paiement {
+  id                                                                      Int                         @id @default(autoincrement())
+  code                                                                    String                      @unique(map: "UNIQ_7C235DE277153098") @db.VarChar(255)
+  label                                                                   String                      @db.VarChar(255)
+  deleted_at                                                              DateTime?                   @db.DateTime(0)
+  invoice_enable                                                          Boolean?                    @default(false)
+  assembly                                                                assembly[]
+  canal_vente_type_paiement                                               canal_vente_type_paiement[]
+  commande                                                                commande[]
+  sav_ticket_data_sav_ticket_data_payment_method_idTotype_paiement        sav_ticket_data[]           @relation("sav_ticket_data_payment_method_idTotype_paiement")
+  sav_ticket_data_sav_ticket_data_course_payment_method_idTotype_paiement sav_ticket_data[]           @relation("sav_ticket_data_course_payment_method_idTotype_paiement")
+}
+
+model vehicule {
+  id                   Int                @id @default(autoincrement())
+  vehicule_category_id Int?
+  status               Int?
+  haillon              Boolean
+  denomination         String             @db.VarChar(255)
+  immatriculation      String             @db.VarChar(255)
+  deleted_at           DateTime?          @db.DateTime(0)
+  societe_chauffeur_id Int?
+  fuel_type            String?            @db.VarChar(255)
+  chauffeur            chauffeur[]
+  course               course[]
+  document             document[]
+  chauffeur_societe    chauffeur_societe? @relation(fields: [societe_chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_292FFF1D4F1ADEE3")
+  vehicule_category    vehicule_category? @relation(fields: [vehicule_category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_292FFF1D54733C01")
+
+  @@index([societe_chauffeur_id], map: "IDX_292FFF1D4F1ADEE3")
+  @@index([vehicule_category_id], map: "IDX_292FFF1D54733C01")
+}
+
+model vehicule_category {
+  id                              Int                               @id @default(autoincrement())
+  code                            String                            @db.VarChar(255)
+  type                            String                            @db.VarChar(255)
+  volume_max                      Float                             @default(20)
+  deleted_at                      DateTime?                         @db.DateTime(0)
+  weight                          Float                             @default(2000)
+  tarification_details            tarification_details[]
+  tarification_details_client_pro tarification_details_client_pro[]
+  vehicule                        vehicule[]
+}
+
+model warehouse {
+  id                          Int                           @id @default(autoincrement())
+  address_id                  Int                           @unique(map: "UNIQ_ECB38BFCF5B7AF75")
+  label                       String                        @db.VarChar(255)
+  description                 String                        @db.LongText
+  surface                     Int
+  public_code                 String                        @unique(map: "UNIQ_ECB38BFCC487249") @db.VarChar(255)
+  code                        String?                       @db.VarChar(255)
+  code_name                   String?                       @db.VarChar(255)
+  actif                       Int                           @default(1)
+  warehouse_type              warehouse_warehouse_type?
+  city                        city[]
+  packages                    packages[]
+  reverse                     reverse[]
+  adresse_enrichie            adresse_enrichie              @relation(fields: [address_id], references: [id], onUpdate: Restrict, map: "FK_ECB38BFCF5B7AF75")
+  warehouse_collaborateur     warehouse_collaborateur[]
+  warehouse_operational_hours warehouse_operational_hours[]
+}
+
+model warehouse_collaborateur {
+  collaborateur_id Int
+  warehouse_id     Int
+  warehouse        warehouse     @relation(fields: [warehouse_id], references: [id], onUpdate: Restrict, map: "FK_F24911B75080ECDE")
+  collaborateur    collaborateur @relation(fields: [collaborateur_id], references: [id], onUpdate: Restrict, map: "FK_F24911B7A848E3B1")
+
+  @@id([collaborateur_id, warehouse_id])
+  @@index([warehouse_id], map: "IDX_F24911B75080ECDE")
+  @@index([collaborateur_id], map: "IDX_F24911B7A848E3B1")
+}
+
+model warehouse_operational_hours {
+  warehouse_id        Int
+  operational_hour_id Int
+  operational_hours   operational_hours @relation(fields: [operational_hour_id], references: [id], onUpdate: Restrict, map: "FK_2624AA571D71189A")
+  warehouse           warehouse         @relation(fields: [warehouse_id], references: [id], onUpdate: Restrict, map: "FK_2624AA575080ECDE")
+
+  @@id([warehouse_id, operational_hour_id])
+  @@index([operational_hour_id], map: "IDX_2624AA571D71189A")
+  @@index([warehouse_id], map: "IDX_2624AA575080ECDE")
+}
+
+model zones_chauffeurs {
+  id                         Int                          @id @default(autoincrement())
+  label                      String                       @db.VarChar(255)
+  latitude                   Float
+  longitude                  Float
+  rayon                      Float
+  created_at                 DateTime?                    @db.DateTime(0)
+  updated_at                 DateTime?                    @db.DateTime(0)
+  area                       Float
+  seuil                      Int
+  canal_vente_zone_chauffeur canal_vente_zone_chauffeur[]
+  chauffeur_zone_chauffeur   chauffeur_zone_chauffeur[]
+  course_creneau_log         course_creneau_log[]
+}
+
+enum system_versioning_platform {
+  android
+  ios
+  web
+}
+
+enum delivery_pictures_type {
+  PickUp
+  DropOff
+}
+
+enum delta_cost_reasons_code {
+  DELTACOST_UNKNOWN
+  DELTACOST_PARTIALLY_DELIVERED
+  DELTACOST_PICKUP_FAILED
+  DELTACOST_LATE_CANCELLATION
+  DELTACOST_WAREHOUSE_RETURN
+  DELTACOST_WRONG_CONTENT
+  DELTACOST_WRONG_FLOOR
+  DELTACOST_EXTEND_WAITING_CUSTOMER
+  DELTACOST_EXTEND_WAITING_WAREHOUSE
+}
+
+enum signature_image_type {
+  PickUp
+  DropOff
+}
+
+enum system_versioning_target {
+  client
+  driver
+  corner
+  site
+  socket
+  tracking
+  driverBeta
+  agent
+  agentBeta
+  ark
+  arkBeta
+}
+
+enum container_status {
+  InUse
+  Returned
+}
+
+enum reverse_pictures_type {
+  Photo
+  BL
+}
+
+enum conversation_subject_service_traitant {
+  CALL_CENTER
+  EXPLOITATION
+  SCN
+}
+
+enum formulaire_collaborateur_type_formulaire {
+  Simulation
+}
+
+enum cmdDevis_status {
+  PENDING
+  CANCELED
+  CONFIRMED
+  REFUSED
+  RefusedByB2H
+}
+
+enum conversation_subject_nature {
+  QR
+  RC
+  FC
+}
+
+enum promotion_type_reduction {
+  pourcentage
+  fixe
+}
+
+enum canal_vente_option_order_service {
+  course
+  montage
+}
+
+enum change_reasons_type {
+  corner
+  mobile_client
+  mobile_driver
+  melting_point
+  scanlog_corner
+}
+
+enum course_attachment_type {
+  PickUp
+  DropOff
+}
+
+enum products_typology {
+  TYPOLOGY_GENERIC
+  TYPOLOGY_FRESH
+  TYPOLOGY_FROZEN
+  TYPOLOGY_DANGEROUS
+  TYPOLOGY_VOLUMINOUS
+  TYPOLOGY_FRAGILE
+  TYPOLOGY_VOLUMINOUS_FRAGILE
+}
+
+enum cmdDevis_vehiculeCategoryId {
+  VEHICLE_TYPE_BIKE
+  VEHICLE_TYPE_SCOOTER
+  VEHICLE_TYPE_VAN_SMALL
+  VEHICLE_TYPE_E_VAN_SMALL
+  VEHICLE_TYPE_VAN_MEDIUM
+  VEHICLE_TYPE_PEDESTRIAN
+  VEHICLE_TYPE_TRUCK
+  VEHICLE_TYPE_VAN_BIG
+  VEHICLE_TYPE_E_VAN_BIG
+  VEHICLE_TYPE_BIKE_CARGO
+  VEHICLE_TYPE_CAR
+  VEHICLE_TYPE_E_CAR
+}
+
+enum avis_source {
+  mobile
+  site
+  avis_verifie @map("avis-verifie")
+  typeform
+}
+
+enum canal_vente_option_partner_service {
+  SERVICE_SIMPLE_INSTALL
+  SERVICE_COMPLEX_INSTALL
+  Installation
+  DEEE
+  SERVICE_SELECTED_ROOM
+  SERVICE_FRONT_HOME
+  SERVICE_RECOVERY
+}
+
+enum reverse_statut {
+  Open
+  Closed
+}
+
+enum contact_arrivee_civility {
+  M
+  Mlle
+  Mme
+  MMR
+  M_   @map("M.")
+}
+
+enum products_state {
+  Fonctionnel
+  R_parable          @map("Réparable")
+  Bon_pour_recyclage @map("Bon pour recyclage")
+}
+
+enum warehouse_warehouse_type {
+  Warning_Agency
+  Private_Agency
+}
+
+enum commande_etat_paiement {
+  EN_ATTENTE
+  EN_COURS_VERIFICATION
+  AUTORISER
+  SUCCESS
+  ECHEC
+  ANNULER
+  REMBOURSER
+}
+
+enum container_tracability_source {
+  Cl_ture     @map("Clôture")
+  Groupe
+  Forest
+  ScanLog
+  Inheritance
+}
+
+enum package_traceability_source {
+  Cl_ture     @map("Clôture")
+  Groupe
+  Forest
+  ScanLog
+  Inheritance
+  Corner
+  EDI
+}
+
+enum tarification_details_order_service {
+  course
+  montage
+}
+
+enum adresse_enrichie_accuracy_level {
+  ROOFTOP
+  RANGE_INTERPOLATED
+  GEOMETRIC_CENTER
+  APPROXIMATE
+}
+
+enum packages_traceability_type {
+  F
+  E
+  P
+}
+
+enum collaborateur_collab_type {
+  Warning
+  Customer_Service
+}
+
+enum assembly_status {
+  en_cours_de_creation
+  created
+  not_dispatched
+  dispatch_in_progress
+  dispatched
+  accepted
+  refused
+  delayed
+  in_progress
+  done
+  canceled
+  SAV_en_cours
+  PV_non_signe
+}
+
+enum canal_vente_config_includedServices {
+  course
+  montage
+  course_montage
+}
+
+enum collaborateur_collab_profile {
+  Collaborateur_corner @map("Collaborateur corner")
+  Cariste_Paris        @map("Cariste Paris")
+  Cariste_Genvillies   @map("Cariste Genvillies")
+  Navette
+  Transporteur_fluvial @map("Transporteur fluvial")
+}
+
+enum assembly_etat_paiement {
+  EN_ATTENTE
+  EN_COURS_VERIFICATION
+  AUTORISER
+  SUCCESS
+  ECHEC
+  ANNULER
+  REMBOURSER
+}
+
+enum billing_account_biller {
+  box2home
+  warning
+}
+
+enum CourseMetadata_course_type {
+  ClientPickup
+  ClientDelivery
+  HubDelivery
+  ClientCollect
+  StoreDelivery
+  StorePickUp
+  StoreCollect
+  clientInternalReturn
+}
+
+enum sav_ticket_data_involved_team {
+  BOX2HOME_CORNER
+  BOX2HOME_OPERATION
+}
+
+enum assembly_montage_source {
+  corner
+  intercom
+  mail
+  SAV
+  api
+  other
+  assembly_team @map("assembly-team")
+}
+
+enum CourseMetadata_kitchen_mark {
+  CUI
+  SCH
+}
+
+enum canal_vente_config_senderSMS {
+  Warning_ @map("Warning+")
+  Box2Home
+}
+
+enum course_departure_type {
+  DEPART_MAGASIN
+  DEPART_ENTREPOT
 }

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { CollaborateurModule } from './modules/collaborateur/collaborateur.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { CollaboratorModule } from './modules/collaborator/collaborator.module';
 
 @Module({
-    imports : [CollaboratorModule, AuthModule]
+    imports : [CollaborateurModule, AuthModule]
 })
 export class RootModule {}
