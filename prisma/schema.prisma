@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -526,18 +527,18 @@ model canal_vente_operational_hours {
 }
 
 model canal_vente_option {
-  id                      Int                                 @id @default(autoincrement())
+  id                      Int                               @id @default(autoincrement())
   canal_vente_id          Int?
-  label                   String                              @db.VarChar(255)
+  label                   String                            @db.VarChar(255)
   price                   Float
-  created_at              DateTime?                           @db.DateTime(0)
-  deleted_at              DateTime?                           @db.DateTime(0)
+  created_at              DateTime?                         @db.DateTime(0)
+  deleted_at              DateTime?                         @db.DateTime(0)
   order_service           canal_vente_option_order_service?
   default_vehicule_option Int?
   new_partner_service     Int?
   assemblies_options      assemblies_options[]
-  partner_service         partner_service?                    @relation(fields: [new_partner_service], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_DA8671B3D5F90B3C")
-  canal_vente             canal_vente?                        @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_DA8671B3DC8E843A")
+  partner_service         partner_service?                  @relation(fields: [new_partner_service], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_DA8671B3D5F90B3C")
+  canal_vente             canal_vente?                      @relation(fields: [canal_vente_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_DA8671B3DC8E843A")
   courses_options         courses_options[]
 
   @@index([new_partner_service], map: "IDX_DA8671B3D5F90B3C")
@@ -878,6 +879,7 @@ model collaborateur {
   is_businessOwner                                   Boolean                       @default(false)
   collab_type                                        collaborateur_collab_type?
   collab_profile                                     collaborateur_collab_profile?
+  role                                               String?
   administ_status_flow                               administ_status_flow[]
   assembly                                           assembly[]
   auth_token                                         auth_token[]
@@ -898,6 +900,8 @@ model collaborateur {
   sav_ticket                                         sav_ticket[]
   sub_category                                       sub_category[]
   warehouse_collaborateur                            warehouse_collaborateur[]
+
+  @@fulltext([login, lastname, firstname])
 }
 
 model collaborateur_prestations {
@@ -2579,16 +2583,6 @@ enum avis_source {
   site
   avis_verifie @map("avis-verifie")
   typeform
-}
-
-enum canal_vente_option_partner_service {
-  SERVICE_SIMPLE_INSTALL
-  SERVICE_COMPLEX_INSTALL
-  Installation
-  DEEE
-  SERVICE_SELECTED_ROOM
-  SERVICE_FRONT_HOME
-  SERVICE_RECOVERY
 }
 
 enum reverse_statut {
