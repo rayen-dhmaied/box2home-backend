@@ -6,6 +6,7 @@ import { RootModule } from './root.module';
 async function bootstrap() {
   const app = await NestFactory.create(RootModule)
   app.getHttpAdapter().getInstance().disable('x-powered-by')
+  app.setGlobalPrefix('api')
   app.enableCors()
   app.useGlobalPipes(new ValidationPipe())
   const { httpAdapter } = app.get(HttpAdapterHost)

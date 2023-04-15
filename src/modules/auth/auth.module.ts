@@ -15,7 +15,7 @@ import { RoleGuard } from './guard/role.guard';
     secret: process.env.JWT_SECRET,
     signOptions: { expiresIn: process.env.JWT_EXP_30MIN },
   })],
-  providers: [AuthService, LocalStrategy, JwtStrategy, 
+  providers: [AuthService, LocalStrategy, JwtStrategy,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

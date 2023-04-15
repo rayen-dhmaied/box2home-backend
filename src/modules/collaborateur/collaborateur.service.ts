@@ -5,12 +5,16 @@ import { CollaborateurRepository } from './collaborateur.repository';
 export class CollaborateurService {
     constructor(private collaborateurRepo : CollaborateurRepository){}
 
-    findAll(take? : string, id?: string) {
-        return this.collaborateurRepo.findAll(+id,+take)
+    findMany(searchString?: string, id?: string, take? : string) {
+        return this.collaborateurRepo.findMany(searchString, +id, +take)
     }
 
     findByLogin(login: string){
         return this.collaborateurRepo.findByLogin(login)
+    }
+
+    findByID(id: string){
+        return this.collaborateurRepo.findByID(+id)
     }
 
     createOne(record:any){
@@ -25,7 +29,7 @@ export class CollaborateurService {
         return this.collaborateurRepo.updateOne(+id,record)
     }
 
-    searchByString(ss: string){
-        return this.collaborateurRepo.searchByString(ss)
-    }
+    // searchByString(ss: string){
+    //     return this.collaborateurRepo.searchByString(ss)
+    // }
 }

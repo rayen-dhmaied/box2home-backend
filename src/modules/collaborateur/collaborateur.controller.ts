@@ -1,33 +1,62 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { CollaborateurService } from './collaborateur.service';
-import { Public } from '../auth/decorator/public.decorator';
+import { ActivityService } from '../activity/activity.service';
 
 @Controller('collaborateur')
-@Public()
 export class CollaborateurController {
-    constructor(private collaborateur : CollaborateurService) {}
+    constructor(private collaborateurService : CollaborateurService, private activityService : ActivityService) {}
 
     @Get()
-    find(@Query('s') ss?: string, @Query('cursor') cursor?: string, @Query('limit') limit?: string){
-        if(typeof ss !== 'undefined' && ss.trim().length>0){
-            return this.collaborateur.searchByString(ss)
-        }
-        return this.collaborateur.findAll()
+    findMany(@Req() req: any, @Query('s') searchString?: string, @Query('cursor') cursor?: string, @Query('limit') limit?: string){
+        // if(typeof searchString !== 'undefined' && searchString.trim().length>0){
+        //     return this.collaborateurService.searchByString(searchString)
+        // }
+        return this.collaborateurService.findMany(searchString,cursor,limit)
     }
 
     @Post()
-    createOne(@Body() record: any){
-        return this.collaborateur.createOne(record)
+    createOne(@Req() req: any, @Body() record: any){
+        if(req.user.is_admin !== true && record.is_admin === true){
+            throw new HttpException('Forbidden' , HttpStatus.FORBIDDEN)
+        }
+        return this.collaborateurService.createOne(record).then((data)=>{
+            const activity= {
+                object : data.id,
+                action : " created collaborateur #",
+                collaborateur_id : req.user.id
+            }
+            this.activityService.createOne(activity)
+        })
     }
 
     @Delete(':id')
-    deleteOne(@Param('id') id: string){
-        return this.collaborateur.deleteOne(id)
+    deleteOne(@Req() req: any, @Param('id') id: string){
+        if(req.user.id === +id) {
+            throw new HttpException('Forbidden' , HttpStatus.FORBIDDEN)
+        }
+        return this.collaborateurService.deleteOne(id).then((data)=>{
+            const activity= {
+                object : data.id,
+                action : " deleted collaborateur #",
+                collaborateur_id : req.user.id
+            }
+            this.activityService.createOne(activity)
+        })
     }
 
     @Patch(':id')
-    updateOne(@Param('id') id: string, @Body() record: any){
-        return this.collaborateur.updateOne(id,record)
+    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: any){
+        if(req.user.is_admin !== true && record.is_admin){
+            throw new HttpException('Forbidden' , HttpStatus.FORBIDDEN)
+        }
+        return this.collaborateurService.updateOne(id,record).then((data)=>{
+            const activity= {
+                object : data.id,
+                action : " updated collaborateur #",
+                collaborateur_id : req.user.id
+            }
+            this.activityService.createOne(activity)
+        })
     }
 
     
