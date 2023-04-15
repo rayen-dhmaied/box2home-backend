@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { Public } from './decorator/public.decorator';
@@ -12,6 +12,12 @@ export class AuthController {
     @Public()
     login(@Req() req : any){
         return this.authService.login(req.user);
+    }
+    
+    @Post('google/login')
+    @Public()
+    googleLogin(@Body() body: any){
+        return this.authService.googleLogin(body.token)
     }
 
     @Get()

@@ -6,25 +6,52 @@ import { hash } from "bcrypt";
 export class CollaborateurRepository {
     constructor(private readonly prisma: PrismaService) {}
 
-    async findAll(cursor? : any, take? : number){
+    async findMany(searchString?: string, cursor? : any, take? : number){
+        let query = {}
+        if(typeof searchString !== 'undefined' && searchString.trim().length>0){
+            query = {
+                where:{
+                    login : {search :searchString},
+                    firstname : {search :searchString},
+                    lastname : {search :searchString},
+                }
+            }
+        }
+
         if(typeof cursor === 'undefined' || isNaN(cursor)){
             const default_cursor = await this.prisma.collaborateur.findFirst({select : {id : true}})
             cursor = default_cursor
+        }else{
+            cursor = { id: cursor}
         }
+
         if(typeof take === 'undefined' || isNaN(take)){
-            take = 100
+            take = 50
         }
-        return  await this.prisma.collaborateur.findMany({
+
+        const result =  await this.prisma.collaborateur.findMany({
+            ...query,
             take,
-            skip : 1,
             cursor
         })
+
+        if(result.length===0){
+            throw new HttpException('Collaborateur not found!', HttpStatus.NOT_FOUND)
+        }
+
+        return { data : result, count: await this.prisma.collaborateur.count()}
         
     }
 
     async findByLogin(login: string){
         return await this.prisma.collaborateur.findUnique({
             where:{login}
+        })
+    }
+
+    async findByID(id: number){
+        return await this.prisma.collaborateur.findUnique({
+            where:{id}
         })
     }
 
@@ -40,7 +67,7 @@ export class CollaborateurRepository {
             where:{id},
         })
     }
-
+    
     async updateOne(id: number, record: any){
         if(record.password){
             record.password = await hash(record.password,8)
@@ -51,19 +78,19 @@ export class CollaborateurRepository {
         })
     }
 
-    async searchByString(ss : string){
-        const result =  await this.prisma.collaborateur.findMany({
-            where:{
-                    login : {search :ss},
-                    firstname : {search :ss},
-                    lastname : {search :ss},
-            }
-        })
+    // async searchByString(ss : string){
+    //     const result =  await this.prisma.collaborateur.findMany({
+    //         where:{
+    //                 login : {search :ss},
+    //                 firstname : {search :ss},
+    //                 lastname : {search :ss},
+    //         }
+    //     })
 
-        if(result.length===0){
-            throw new HttpException('Collaborateur not found!', HttpStatus.NOT_FOUND)
-        }
+    //     if(result.length===0){
+    //         throw new HttpException('Collaborateur not found!', HttpStatus.NOT_FOUND)
+    //     }
 
-        return result
-    }
+    //     return result
+    // }
 }

@@ -877,9 +877,9 @@ model collaborateur {
   is_admin                                           Boolean                       @default(false)
   tentative                                          Int                           @default(0)
   is_businessOwner                                   Boolean                       @default(false)
+  role                                               Role?
   collab_type                                        collaborateur_collab_type?
   collab_profile                                     collaborateur_collab_profile?
-  role                                               String?
   administ_status_flow                               administ_status_flow[]
   assembly                                           assembly[]
   auth_token                                         auth_token[]
@@ -2452,6 +2452,25 @@ model zones_chauffeurs {
   canal_vente_zone_chauffeur canal_vente_zone_chauffeur[]
   chauffeur_zone_chauffeur   chauffeur_zone_chauffeur[]
   course_creneau_log         course_creneau_log[]
+}
+
+model activity {
+  id                 Int      @id @default(autoincrement())
+  collaborateur_name String
+  action             String
+  object             Int
+  createdAt          DateTime @default(now())
+
+  @@fulltext([collaborateur_name, action])
+}
+
+enum Role {
+  res_course
+  res_canal_vente
+  res_client
+  res_chauffeur
+  res_avis
+  res_collaborateur
 }
 
 enum system_versioning_platform {
