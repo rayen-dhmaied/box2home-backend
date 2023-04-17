@@ -9,11 +9,19 @@ export class CollaborateurRepository {
     async findMany(searchString?: string, cursor? : any, take? : number){
         let query = {}
         if(typeof searchString !== 'undefined' && searchString.trim().length>0){
-            query = {
-                where:{
-                    login : {search :searchString},
-                    firstname : {search :searchString},
-                    lastname : {search :searchString},
+            if(isNaN(+searchString)){
+                query = {
+                    where:{
+                        login : {search :searchString},
+                        firstname : {search :searchString},
+                        lastname : {search :searchString},
+                    }
+                }
+            }else{
+                query = {
+                    where:{
+                        id : {equals : +searchString}
+                    }
                 }
             }
         }

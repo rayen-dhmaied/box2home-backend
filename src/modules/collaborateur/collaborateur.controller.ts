@@ -16,9 +16,6 @@ export class CollaborateurController {
 
     @Post()
     createOne(@Req() req: any, @Body() record: any){
-        if(req.user.is_admin !== true && record.is_admin === true){
-            throw new HttpException('Forbidden' , HttpStatus.FORBIDDEN)
-        }
         return this.collaborateurService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
@@ -26,6 +23,7 @@ export class CollaborateurController {
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
+            return data
         })
     }
 
@@ -46,9 +44,6 @@ export class CollaborateurController {
 
     @Patch(':id')
     updateOne(@Req() req: any, @Param('id') id: string, @Body() record: any){
-        if(req.user.is_admin !== true && record.is_admin){
-            throw new HttpException('Forbidden' , HttpStatus.FORBIDDEN)
-        }
         return this.collaborateurService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,
@@ -56,6 +51,7 @@ export class CollaborateurController {
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
+            return data
         })
     }
 
