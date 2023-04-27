@@ -9,17 +9,61 @@ export class CourseRepository {
         let query = {}
         if(typeof searchString !== 'undefined' && searchString.trim().length>0){
             if(isNaN(+searchString)){
+                searchString.replace('"','')
                 query = {
                     where:{
-                        login : {search :searchString},
-                        firstname : {search :searchString},
-                        lastname : {search :searchString},
+                        code :  {search :searchString},
+                        observation :  {search :searchString},
+                        factures :  {search :searchString},
+                        course_source :  {search :searchString},
+                        vehicule_type :  {search :searchString},
+                        nom_societe :  {search :searchString},
+                        tracking_number :  {search :searchString},
+                        receipt_number :  {search :searchString},
+                        failure_reason :  {search :searchString},
+                        driver_comment :  {search :searchString},
+                        secret_code :  {search :searchString},
+                        delivery_related :  {search :searchString},
+                        tour :  {search :searchString},
+                        note_interne :  {search :searchString},
+                        observation_arrivee :  {search :searchString},
+                        point_enlevement :  {search :searchString},
                     }
                 }
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString}
+                        id : {equals : +searchString},
+                        adresse_depart : {equals : +searchString},
+                        adresse_arrivee : {equals : +searchString},
+                        chauffeur_id : {equals : +searchString},
+                        lettre_voiture_id : {equals : +searchString},
+                        contact_arrivee_id : {equals : +searchString},
+                        status_id : {equals : +searchString},
+                        commande_id : {equals : +searchString},
+                        point_enlevement : {equals : +searchString},
+                        nombre_colis : {equals : +searchString},
+                        estimated_km : {equals : +searchString},
+                        montantHT : {equals : +searchString},
+                        vehicule_id : {equals : +searchString},
+                        contact_depart_id : {equals : +searchString},
+                        note_interne : {equals : +searchString},
+                        montant_prestataire_ht : {equals : +searchString},
+                        weight : {equals : +searchString},
+                        compta_valid : {equals : +searchString},
+                        purchase_amount : {equals : +searchString},
+                        tarification_details_id : {equals : +searchString},
+                        floor : {equals : +searchString},
+                        coursemetadata_id : {equals : +searchString},
+                        reception_status : {equals : +searchString},
+                        delivery_status : {equals : +searchString},
+                        customer_delivery_status : {equals : +searchString},
+                        volume : {equals : +searchString},
+                        service_id : {equals : +searchString},
+                        pick_up_rank : {equals : +searchString},
+                        drop_off_rank : {equals : +searchString},
+                        canal_prestation_service : {equals : +searchString},
+                        administratif_status_id : {equals : +searchString},
                     }
                 }
             }

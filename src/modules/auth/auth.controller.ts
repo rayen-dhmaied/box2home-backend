@@ -21,7 +21,7 @@ export class AuthController {
     }
 
     @Get()
-    validateToken(){
-        return
+    validateTokenRole(@Req() req: any){
+        return this.authService.validateRole(req.user)
     }
 }

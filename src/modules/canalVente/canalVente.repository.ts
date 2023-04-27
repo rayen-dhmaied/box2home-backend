@@ -9,17 +9,22 @@ export class CanalVenteRepository {
         let query = {}
         if(typeof searchString !== 'undefined' && searchString.trim().length>0){
             if(isNaN(+searchString)){
+                searchString.replace('"','')
                 query = {
                     where:{
-                        login : {search :searchString},
-                        firstname : {search :searchString},
-                        lastname : {search :searchString},
+                        code : {search :searchString},
+                        name : {search :searchString},
+                        business_unit : {search :searchString},
                     }
                 }
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString}
+                        id : {equals : +searchString},
+                        business_owner : {equals : +searchString},
+                        rules_id : {equals : +searchString},
+                        macro_canal : {equals : +searchString},
+                        billing_accounts_id  : {equals : +searchString},
                     }
                 }
             }

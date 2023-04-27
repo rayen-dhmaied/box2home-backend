@@ -9,17 +9,24 @@ export class AvisRepository {
         let query = {}
         if(typeof searchString !== 'undefined' && searchString.trim().length>0){
             if(isNaN(+searchString)){
+                searchString.replace('"','')
                 query = {
                     where:{
-                        login : {search :searchString},
-                        firstname : {search :searchString},
-                        lastname : {search :searchString},
+                        commentaire : {search :searchString},
+                        id_review_product_avis_verifie : {search :searchString},
+                        commentaire_commande : {search :searchString},
+                        id_review_site_avis_verifie : {search :searchString},
                     }
                 }
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString}
+                        id : {equals : +searchString},
+                        chauffeur_id : {equals : +searchString},
+                        client_id : {equals : +searchString},
+                        nombre_etoile : {equals : +searchString},
+                        course_id : {equals : +searchString},
+                        nombre_etoile_commande : {equals : +searchString}
                     }
                 }
             }

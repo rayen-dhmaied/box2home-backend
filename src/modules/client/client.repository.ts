@@ -10,17 +10,23 @@ export class ClientRepository {
         let query = {}
         if(typeof searchString !== 'undefined' && searchString.trim().length>0){
             if(isNaN(+searchString)){
+                searchString.replace('"','')
                 query = {
                     where:{
                         login : {search :searchString},
                         firstname : {search :searchString},
                         lastname : {search :searchString},
+                        phone : {search :searchString},
+                        adresse_facturation : {search :searchString},
+                        mail : {search :searchString},
+                        reputation : {search :searchString},
                     }
                 }
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString}
+                        id : {equals : +searchString},
+                        societe_id : {equals : +searchString},
                     }
                 }
             }

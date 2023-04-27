@@ -1,8 +1,13 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { CollaborateurService } from './collaborateur.service';
 import { ActivityService } from '../activity/activity.service';
+import { createCollaborateurDto } from './dto/createCollaborateur.dto';
+import { Role as roles } from '@prisma/client';
+import { Role } from '../auth/decorator/role.decorator';
+import { updateCollaborateurDto } from './dto/updateCollaborateur.dto';
 
 @Controller('collaborateur')
+@Role(roles.res_collaborateur)
 export class CollaborateurController {
     constructor(private collaborateurService : CollaborateurService, private activityService : ActivityService) {}
 
@@ -15,7 +20,7 @@ export class CollaborateurController {
     }
 
     @Post()
-    createOne(@Req() req: any, @Body() record: any){
+    createOne(@Req() req: any, @Body() record: createCollaborateurDto){
         return this.collaborateurService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
@@ -28,6 +33,7 @@ export class CollaborateurController {
     }
 
     @Delete(':id')
+    @Role('admin')
     deleteOne(@Req() req: any, @Param('id') id: string){
         if(req.user.id === +id) {
             throw new HttpException('Forbidden' , HttpStatus.FORBIDDEN)
@@ -44,7 +50,10 @@ export class CollaborateurController {
     }
 
     @Patch(':id')
-    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: any){
+    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: updateCollaborateurDto){
+        if(!req.user.is_admin && (record.is_admin || record.role) ){
+            throw new HttpException('Forbidden' , HttpStatus.FORBIDDEN)
+        }
         return this.collaborateurService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,

@@ -10,17 +10,27 @@ export class ChauffeurRepository {
         let query = {}
         if(typeof searchString !== 'undefined' && searchString.trim().length>0){
             if(isNaN(+searchString)){
+                searchString.replace('"','')
                 query = {
                     where:{
                         login : {search :searchString},
                         firstname : {search :searchString},
                         lastname : {search :searchString},
+                        phone : {search :searchString},
+                        code : {search :searchString},
+                        device_info : {search :searchString},
+                        role : {search :searchString},
                     }
                 }
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString}
+                        id : {equals : +searchString},
+                        premium_id : {equals : +searchString},
+                        etat : {equals : +searchString},
+                        societe_id : {equals : +searchString},
+                        current_vehicule : {equals : +searchString},
+                        on_duty : {equals : +searchString}
                     }
                 }
             }

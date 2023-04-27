@@ -1,8 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ActivityService } from '../activity/activity.service';
 import { ChauffeurService } from './chauffeur.service';
+import { createChauffeurDto } from './dto/createChauffeur.dto';
+import { Role } from '../auth/decorator/role.decorator';
+import { Role as roles } from '@prisma/client';
+import { updateChauffeurDto } from './dto/updateChauffeur.dto';
 
 @Controller('chauffeur')
+@Role(roles.res_chauffeur)
 export class ChauffeurController {
     constructor(private chauffeurService : ChauffeurService, private activityService : ActivityService) {}
 
@@ -15,7 +20,7 @@ export class ChauffeurController {
     }
 
     @Post()
-    createOne(@Req() req: any, @Body() record: any){
+    createOne(@Req() req: any, @Body() record: createChauffeurDto){
         return this.chauffeurService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
@@ -41,7 +46,7 @@ export class ChauffeurController {
     }
 
     @Patch(':id')
-    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: any){
+    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: updateChauffeurDto){
         return this.chauffeurService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,

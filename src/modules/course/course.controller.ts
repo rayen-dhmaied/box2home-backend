@@ -1,8 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ActivityService } from '../activity/activity.service';
 import { CourseService } from './course.service';
+import { CreateCourseDto } from './dto/createCourse.dto';
+import { Role as roles } from '@prisma/client';
+import { Role } from '../auth/decorator/role.decorator';
+import { UpdateCourseDto } from './dto/updateCourse.dto';
 
 @Controller('course')
+@Role(roles.res_course)
 export class CourseController {
     constructor(private courseService : CourseService, private activityService : ActivityService) {}
 
@@ -15,7 +20,7 @@ export class CourseController {
     }
 
     @Post()
-    createOne(@Req() req: any, @Body() record: any){
+    createOne(@Req() req: any, @Body() record: CreateCourseDto){
         return this.courseService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
@@ -41,7 +46,7 @@ export class CourseController {
     }
 
     @Patch(':id')
-    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: any){
+    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: UpdateCourseDto){
         return this.courseService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,

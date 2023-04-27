@@ -46,9 +46,19 @@ export class AuthService {
         const current_user = {
             login : collaborateur.login,
             firstname : collaborateur.firstname,
-            lastname : collaborateur.lastname
+            lastname : collaborateur.lastname,
+            is_admin : collaborateur.is_admin,
+            role : collaborateur.role
         }
         return {access_token: this.JwtService.sign(payload),current_user}
+    }
+
+    async validateRole(user: any){
+        const collaborateur = await this.collaborateur.findByID(user.id.toString())
+        if (collaborateur.is_admin === user.is_admin && collaborateur.role === user.role){
+            return true
+        }
+        throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)
     }
 
 }

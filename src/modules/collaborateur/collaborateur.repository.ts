@@ -10,17 +10,20 @@ export class CollaborateurRepository {
         let query = {}
         if(typeof searchString !== 'undefined' && searchString.trim().length>0){
             if(isNaN(+searchString)){
+                searchString.replace('"','')
                 query = {
                     where:{
                         login : {search :searchString},
                         firstname : {search :searchString},
                         lastname : {search :searchString},
+                        phone : {search :searchString},
                     }
                 }
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString}
+                        id : {equals : +searchString},
+                        tentative : {equals : +searchString}
                     }
                 }
             }

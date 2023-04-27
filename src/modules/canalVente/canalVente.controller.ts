@@ -1,8 +1,13 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ActivityService } from '../activity/activity.service';
 import { CanalVenteService } from './canalVente.service';
+import { createCanalVenteDto } from './dto/createCanalVente.dto';
+import { Role } from '../auth/decorator/role.decorator';
+import { Role as roles } from '@prisma/client';
+import { updateCanalVenteDto } from './dto/updateCanalVente.dto';
 
 @Controller('canal-vente')
+@Role(roles.res_canal_vente)
 export class CanalVenteController {
     constructor(private canalVenteService : CanalVenteService, private activityService : ActivityService) {}
 
@@ -15,7 +20,7 @@ export class CanalVenteController {
     }
 
     @Post()
-    createOne(@Req() req: any, @Body() record: any){
+    createOne(@Req() req: any, @Body() record: createCanalVenteDto){
         return this.canalVenteService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
@@ -41,7 +46,7 @@ export class CanalVenteController {
     }
 
     @Patch(':id')
-    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: any){
+    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: updateCanalVenteDto){
         return this.canalVenteService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,
