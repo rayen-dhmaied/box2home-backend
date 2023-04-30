@@ -28,8 +28,4 @@ export class CollaborateurService {
     updateOne(id:string, record:any){
         return this.collaborateurRepo.updateOne(+id,record)
     }
-
-    // searchByString(ss: string){
-    //     return this.collaborateurRepo.searchByString(ss)
-    // }
 }

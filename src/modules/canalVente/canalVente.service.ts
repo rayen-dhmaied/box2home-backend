@@ -24,8 +24,4 @@ export class CanalVenteService {
     updateOne(id:string, record:any){
         return this.canalVenteRepo.updateOne(+id,record)
     }
-
-    // searchByString(ss: string){
-    //     return this.canalVenteRepo.searchByString(ss)
-    // }
 }

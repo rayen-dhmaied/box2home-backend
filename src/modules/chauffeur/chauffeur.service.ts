@@ -24,8 +24,4 @@ export class ChauffeurService {
     updateOne(id:string, record:any){
         return this.chauffeurRepo.updateOne(+id,record)
     }
-
-    // searchByString(ss: string){
-    //     return this.chauffeurRepo.searchByString(ss)
-    // }
 }

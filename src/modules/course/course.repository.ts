@@ -33,45 +33,47 @@ export class CourseRepository {
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString},
-                        adresse_depart : {equals : +searchString},
-                        adresse_arrivee : {equals : +searchString},
-                        chauffeur_id : {equals : +searchString},
-                        lettre_voiture_id : {equals : +searchString},
-                        contact_arrivee_id : {equals : +searchString},
-                        status_id : {equals : +searchString},
-                        commande_id : {equals : +searchString},
-                        point_enlevement : {equals : +searchString},
-                        nombre_colis : {equals : +searchString},
-                        estimated_km : {equals : +searchString},
-                        montantHT : {equals : +searchString},
-                        vehicule_id : {equals : +searchString},
-                        contact_depart_id : {equals : +searchString},
-                        note_interne : {equals : +searchString},
-                        montant_prestataire_ht : {equals : +searchString},
-                        weight : {equals : +searchString},
-                        compta_valid : {equals : +searchString},
-                        purchase_amount : {equals : +searchString},
-                        tarification_details_id : {equals : +searchString},
-                        floor : {equals : +searchString},
-                        coursemetadata_id : {equals : +searchString},
-                        reception_status : {equals : +searchString},
-                        delivery_status : {equals : +searchString},
-                        customer_delivery_status : {equals : +searchString},
-                        volume : {equals : +searchString},
-                        service_id : {equals : +searchString},
-                        pick_up_rank : {equals : +searchString},
-                        drop_off_rank : {equals : +searchString},
-                        canal_prestation_service : {equals : +searchString},
-                        administratif_status_id : {equals : +searchString},
+                        OR :[
+                            {id : {equals : +searchString}},
+                            {adresse_depart : {equals : +searchString}},
+                            {adresse_arrivee : {equals : +searchString}},
+                            {chauffeur_id : {equals : +searchString}},
+                            {lettre_voiture_id : {equals : +searchString}},
+                            {contact_arrivee_id : {equals : +searchString}},
+                            {status_id : {equals : +searchString}},
+                            {commande_id : {equals : +searchString}},
+                            {point_enlevement : {equals : +searchString}},
+                            {nombre_colis : {equals : +searchString}},
+                            {estimated_km : {equals : +searchString}},
+                            {montantHT : {equals : +searchString}},
+                            {vehicule_id : {equals : +searchString}},
+                            {contact_depart_id : {equals : +searchString}},
+                            {note_interne : {equals : +searchString}},
+                            {montant_prestataire_ht : {equals : +searchString}},
+                            {weight : {equals : +searchString}},
+                            {compta_valid : {equals : +searchString}},
+                            {purchase_amount : {equals : +searchString}},
+                            {tarification_details_id : {equals : +searchString}},
+                            {floor : {equals : +searchString}},
+                            {coursemetadata_id : {equals : +searchString}},
+                            {reception_status : {equals : +searchString}},
+                            {delivery_status : {equals : +searchString}},
+                            {customer_delivery_status : {equals : +searchString}},
+                            {volume : {equals : +searchString}},
+                            {service_id : {equals : +searchString}},
+                            {pick_up_rank : {equals : +searchString}},
+                            {drop_off_rank : {equals : +searchString}},
+                            {canal_prestation_service : {equals : +searchString}},
+                            {administratif_status_id : {equals : +searchString}},
+                        ]
                     }
                 }
             }
         }
 
         if(typeof cursor === 'undefined' || isNaN(cursor)){
-            const default_cursor = await this.prisma.course.findFirst({select : {id : true}})
-            cursor = default_cursor
+            const default_cursor = await this.prisma.$queryRaw`SELECT MIN(id) FROM course;`
+            cursor = {id :default_cursor[0]['MIN(id)']}
         }else{
             cursor = { id: cursor}
         }
@@ -90,7 +92,7 @@ export class CourseRepository {
             throw new HttpException('Course not found!', HttpStatus.NOT_FOUND)
         }
 
-        return { data : result, count: await this.prisma.course.count()}
+        return { data : result, count: await this.prisma.course.count({...query}) }
         
     }
 
@@ -118,20 +120,4 @@ export class CourseRepository {
             data:record
         })
     }
-
-    // async searchByString(ss : string){
-    //     const result =  await this.prisma.collaborateur.findMany({
-    //         where:{
-    //                 login : {search :ss},
-    //                 firstname : {search :ss},
-    //                 lastname : {search :ss},
-    //         }
-    //     })
-
-    //     if(result.length===0){
-    //         throw new HttpException('Collaborateur not found!', HttpStatus.NOT_FOUND)
-    //     }
-
-    //     return result
-    // }
 }

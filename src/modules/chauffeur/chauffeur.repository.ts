@@ -25,20 +25,22 @@ export class ChauffeurRepository {
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString},
-                        premium_id : {equals : +searchString},
-                        etat : {equals : +searchString},
-                        societe_id : {equals : +searchString},
-                        current_vehicule : {equals : +searchString},
-                        on_duty : {equals : +searchString}
+                        OR:[
+                            {id : {equals : +searchString}},
+                            {premium_id : {equals : +searchString}},
+                            {etat : {equals : +searchString}},
+                            {societe_id : {equals : +searchString}},
+                            {current_vehicule : {equals : +searchString}},
+                            {on_duty : {equals : +searchString}}
+                        ]
                     }
                 }
             }
         }
 
         if(typeof cursor === 'undefined' || isNaN(cursor)){
-            const default_cursor = await this.prisma.chauffeur.findFirst({select : {id : true}})
-            cursor = default_cursor
+            const default_cursor = await this.prisma.$queryRaw`SELECT MIN(id) FROM chauffeur;`
+            cursor = {id :default_cursor[0]['MIN(id)']}
         }else{
             cursor = { id: cursor}
         }
@@ -57,7 +59,7 @@ export class ChauffeurRepository {
             throw new HttpException('Chauffeur not found!', HttpStatus.NOT_FOUND)
         }
 
-        return { data : result, count: await this.prisma.chauffeur.count()}
+        return { data : result, count: await this.prisma.chauffeur.count({...query})}
         
     }
 
@@ -89,20 +91,4 @@ export class ChauffeurRepository {
             data:record
         })
     }
-
-    // async searchByString(ss : string){
-    //     const result =  await this.prisma.collaborateur.findMany({
-    //         where:{
-    //                 login : {search :ss},
-    //                 firstname : {search :ss},
-    //                 lastname : {search :ss},
-    //         }
-    //     })
-
-    //     if(result.length===0){
-    //         throw new HttpException('Collaborateur not found!', HttpStatus.NOT_FOUND)
-    //     }
-
-    //     return result
-    // }
 }

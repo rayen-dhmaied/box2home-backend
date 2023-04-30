@@ -20,19 +20,21 @@ export class CanalVenteRepository {
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString},
-                        business_owner : {equals : +searchString},
-                        rules_id : {equals : +searchString},
-                        macro_canal : {equals : +searchString},
-                        billing_accounts_id  : {equals : +searchString},
+                        OR:[
+                            {id : {equals : +searchString}},
+                            {business_owner : {equals : +searchString}},
+                            {rules_id : {equals : +searchString}},
+                            {macro_canal : {equals : +searchString}},
+                            {billing_accounts_id  : {equals : +searchString}},
+                        ]
                     }
                 }
             }
         }
 
         if(typeof cursor === 'undefined' || isNaN(cursor)){
-            const default_cursor = await this.prisma.canal_vente.findFirst({select : {id : true}})
-            cursor = default_cursor
+            const default_cursor = await this.prisma.$queryRaw`SELECT MIN(id) FROM canal_vente;`
+            cursor = {id :default_cursor[0]['MIN(id)']}
         }else{
             cursor = { id: cursor}
         }
@@ -51,7 +53,7 @@ export class CanalVenteRepository {
             throw new HttpException('Canal de Vente not found!', HttpStatus.NOT_FOUND)
         }
 
-        return { data : result, count: await this.prisma.canal_vente.count()}
+        return { data : result, count: await this.prisma.canal_vente.count({...query})}
         
     }
 
@@ -79,20 +81,4 @@ export class CanalVenteRepository {
             data:record
         })
     }
-
-    // async searchByString(ss : string){
-    //     const result =  await this.prisma.collaborateur.findMany({
-    //         where:{
-    //                 login : {search :ss},
-    //                 firstname : {search :ss},
-    //                 lastname : {search :ss},
-    //         }
-    //     })
-
-    //     if(result.length===0){
-    //         throw new HttpException('Collaborateur not found!', HttpStatus.NOT_FOUND)
-    //     }
-
-    //     return result
-    // }
 }

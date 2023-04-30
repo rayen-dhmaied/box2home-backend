@@ -24,8 +24,4 @@ export class AvisService {
     updateOne(id:string, record:any){
         return this.avisRepo.updateOne(+id,record)
     }
-
-    // searchByString(ss: string){
-    //     return this.avisRepo.searchByString(ss)
-    // }
 }

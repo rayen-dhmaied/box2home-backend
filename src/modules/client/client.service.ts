@@ -24,8 +24,4 @@ export class ClientService {
     updateOne(id:string, record:any){
         return this.clientRepo.updateOne(+id,record)
     }
-
-    // searchByString(ss: string){
-    //     return this.clientRepo.searchByString(ss)
-    // }
 }

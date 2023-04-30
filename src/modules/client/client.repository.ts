@@ -25,16 +25,18 @@ export class ClientRepository {
             }else{
                 query = {
                     where:{
-                        id : {equals : +searchString},
-                        societe_id : {equals : +searchString},
+                        OR: [
+                            {id : {equals : +searchString}},
+                            {societe_id : {equals : +searchString}}
+                        ]
                     }
                 }
             }
         }
 
         if(typeof cursor === 'undefined' || isNaN(cursor)){
-            const default_cursor = await this.prisma.client.findFirst({select : {id : true}})
-            cursor = default_cursor
+            const default_cursor = await this.prisma.$queryRaw`SELECT MIN(id) FROM client;`
+            cursor = {id :default_cursor[0]['MIN(id)']}
         }else{
             cursor = { id: cursor}
         }
@@ -53,7 +55,7 @@ export class ClientRepository {
             throw new HttpException('Client not found!', HttpStatus.NOT_FOUND)
         }
 
-        return { data : result, count: await this.prisma.client.count()}
+        return { data : result, count: await this.prisma.client.count({...query})}
         
     }
 
@@ -85,20 +87,4 @@ export class ClientRepository {
             data:record
         })
     }
-
-    // async searchByString(ss : string){
-    //     const result =  await this.prisma.collaborateur.findMany({
-    //         where:{
-    //                 login : {search :ss},
-    //                 firstname : {search :ss},
-    //                 lastname : {search :ss},
-    //         }
-    //     })
-
-    //     if(result.length===0){
-    //         throw new HttpException('Collaborateur not found!', HttpStatus.NOT_FOUND)
-    //     }
-
-    //     return result
-    // }
 }

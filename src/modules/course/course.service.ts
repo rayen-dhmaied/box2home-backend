@@ -24,8 +24,4 @@ export class CourseService {
     updateOne(id:string, record:any){
         return this.courseRepo.updateOne(+id,record)
     }
-
-    // searchByString(ss: string){
-    //     return this.courseRepo.searchByString(ss)
-    // }
 }

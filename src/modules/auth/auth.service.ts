@@ -3,6 +3,10 @@ import { CollaborateurService } from '../collaborateur/collaborateur.service'
 import { JwtService } from '@nestjs/jwt'
 import {compare} from 'bcrypt'
 import { OAuth2Client } from 'google-auth-library';
+import { MailerService } from '@nestjs-modules/mailer';
+import * as path from 'path';
+import * as fs from 'fs'
+import handlebars from 'handlebars';
 
 const googleClient = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
@@ -13,7 +17,8 @@ const googleClient = new OAuth2Client(
 export class AuthService {
     constructor(
         private collaborateur: CollaborateurService,     
-        private JwtService: JwtService
+        private JwtService: JwtService,
+        private mailerService : MailerService
     ) {}
 
     async validateCollaborateur(login: string, password: string){
@@ -59,6 +64,43 @@ export class AuthService {
             return true
         }
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)
+    }
+
+    async sendResetPwEmail(email: string){
+        const fetched_collaborateur = await this.collaborateur.findByLogin(email)
+        if(fetched_collaborateur){
+            const token = this.JwtService.sign({id: fetched_collaborateur.id}, {
+                secret : process.env.JWT_PW_RESET_SECRET,
+                expiresIn : process.env.JWT_PW_RESET_EXP
+            })
+            const source = fs.readFileSync(path.join(__dirname, "../../reset-password.hbs"), "utf8")
+            const template = handlebars.compile(source)
+            await this.mailerService.sendMail({
+                to:email,
+                from: process.env.FROM_EMAIL,
+                subject: 'Reset Your B2H Centrum Password',
+                html : template({name : fetched_collaborateur.firstname, token})
+            })
+        }
+    }
+
+    async validateResetPWToken(token : string){
+        try{
+            return await this.JwtService.verify(token,{
+                secret : process.env.JWT_PW_RESET_SECRET,
+            },)
+        }catch(error){
+            return false
+        } 
+    }
+
+    async changePassword(token: string,password : string){
+        const payload = await this.validateResetPWToken(token)
+        if(payload.id){
+            this.collaborateur.updateOne(payload.id,{password})
+        }else{
+            throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)
+        }
     }
 
 }

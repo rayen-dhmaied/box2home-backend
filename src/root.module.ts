@@ -7,8 +7,28 @@ import { AvisModule } from './modules/avis/avis.module';
 import { CanalVenteModule } from './modules/canalVente/canalVente.module';
 import { ChauffeurModule } from './modules/chauffeur/chauffeur.module';
 import { CourseModule } from './modules/course/course.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
-    imports : [AvisModule, CollaborateurModule, ClientModule, CanalVenteModule, ChauffeurModule, CourseModule, ActivityModule, AuthModule]
+    imports : [
+        AvisModule, 
+        CollaborateurModule, 
+        ClientModule, 
+        CanalVenteModule, 
+        ChauffeurModule, 
+        CourseModule, 
+        ActivityModule, 
+        AuthModule,
+        MailerModule.forRoot({
+            transport: {
+              host: process.env.STMP_HOST ?? '',
+              port: parseInt(process.env.STMP_PORT ?? '587', 10),
+              auth: {
+                user: process.env.STMP_USER ?? '',
+                pass: process.env.STMP_PASSWORD ?? ''
+              },
+            }
+          }),
+    ]
 })
 export class RootModule {}
