@@ -3,7 +3,7 @@ import { ActivityService } from '../activity/activity.service';
 import { CanalVenteService } from './canalVente.service';
 import { createCanalVenteDto } from './dto/createCanalVente.dto';
 import { Role } from '../auth/decorator/role.decorator';
-import { Role as roles } from '@prisma/client';
+import { collaborateur_role as roles } from '@prisma/client';
 import { updateCanalVenteDto } from './dto/updateCanalVente.dto';
 
 @Controller('canal-vente')
@@ -13,9 +13,6 @@ export class CanalVenteController {
 
     @Get()
     findMany(@Req() req: any, @Query('s') searchString?: string, @Query('cursor') cursor?: string, @Query('limit') limit?: string){
-        // if(typeof searchString !== 'undefined' && searchString.trim().length>0){
-        //     return this.canalVenteService.searchByString(searchString)
-        // }
         return this.canalVenteService.findMany(searchString,cursor,limit)
     }
 

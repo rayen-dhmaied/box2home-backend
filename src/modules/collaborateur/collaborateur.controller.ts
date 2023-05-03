@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch,
 import { CollaborateurService } from './collaborateur.service';
 import { ActivityService } from '../activity/activity.service';
 import { createCollaborateurDto } from './dto/createCollaborateur.dto';
-import { Role as roles } from '@prisma/client';
+import { collaborateur_role as roles } from '@prisma/client';
 import { Role } from '../auth/decorator/role.decorator';
 import { updateCollaborateurDto } from './dto/updateCollaborateur.dto';
 
@@ -13,9 +13,6 @@ export class CollaborateurController {
 
     @Get()
     findMany(@Req() req: any, @Query('s') searchString?: string, @Query('cursor') cursor?: string, @Query('limit') limit?: string){
-        // if(typeof searchString !== 'undefined' && searchString.trim().length>0){
-        //     return this.collaborateurService.searchByString(searchString)
-        // }
         return this.collaborateurService.findMany(searchString,cursor,limit)
     }
 

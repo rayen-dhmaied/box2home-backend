@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@
 import { ActivityService } from '../activity/activity.service';
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './dto/createCourse.dto';
-import { Role as roles } from '@prisma/client';
+import { collaborateur_role as roles } from '@prisma/client';
 import { Role } from '../auth/decorator/role.decorator';
 import { UpdateCourseDto } from './dto/updateCourse.dto';
 
@@ -13,9 +13,6 @@ export class CourseController {
 
     @Get()
     findMany(@Req() req: any, @Query('s') searchString?: string, @Query('cursor') cursor?: string, @Query('limit') limit?: string){
-        // if(typeof searchString !== 'undefined' && searchString.trim().length>0){
-        //     return this.courseService.searchByString(searchString)
-        // }
         return this.courseService.findMany(searchString,cursor,limit)
     }
 

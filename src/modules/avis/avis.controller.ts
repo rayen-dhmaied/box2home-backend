@@ -3,7 +3,7 @@ import { ActivityService } from '../activity/activity.service';
 import { AvisService } from './avis.service';
 import { CreateAvisDto } from './dto/createAvis.dto';
 import { Role } from '../auth/decorator/role.decorator';
-import { Role as roles } from '@prisma/client';
+import { collaborateur_role as roles } from '@prisma/client';
 import { UpdateAvisDto } from './dto/updateAvis.dto';
 
 @Controller('avis')
@@ -13,9 +13,6 @@ export class AvisController {
 
     @Get()
     findMany(@Req() req: any, @Query('s') searchString?: string, @Query('cursor') cursor?: string, @Query('limit') limit?: string){
-        // if(typeof searchString !== 'undefined' && searchString.trim().length>0){
-        //     return this.avis.searchByString(searchString)
-        // }
         return this.avisService.findMany(searchString,cursor,limit)
     }
 

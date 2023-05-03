@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@
 import { ActivityService } from '../activity/activity.service';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/createClient.dto';
-import { Role as roles } from '@prisma/client';
+import { collaborateur_role as roles } from '@prisma/client';
 import { Role } from '../auth/decorator/role.decorator';
 import { updateClientDto } from './dto/updateClient.dto';
 
@@ -13,9 +13,6 @@ export class ClientController {
 
     @Get()
     findMany(@Req() req: any, @Query('s') searchString?: string, @Query('cursor') cursor?: string, @Query('limit') limit?: string){
-        // if(typeof searchString !== 'undefined' && searchString.trim().length>0){
-        //     return this.clientService.searchByString(searchString)
-        // }
         return this.clientService.findMany(searchString,cursor,limit)
     }
 

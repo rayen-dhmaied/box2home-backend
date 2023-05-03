@@ -3,7 +3,7 @@ import { ActivityService } from '../activity/activity.service';
 import { ChauffeurService } from './chauffeur.service';
 import { createChauffeurDto } from './dto/createChauffeur.dto';
 import { Role } from '../auth/decorator/role.decorator';
-import { Role as roles } from '@prisma/client';
+import { collaborateur_role as roles } from '@prisma/client';
 import { updateChauffeurDto } from './dto/updateChauffeur.dto';
 
 @Controller('chauffeur')
@@ -13,9 +13,6 @@ export class ChauffeurController {
 
     @Get()
     findMany(@Req() req: any, @Query('s') searchString?: string, @Query('cursor') cursor?: string, @Query('limit') limit?: string){
-        // if(typeof searchString !== 'undefined' && searchString.trim().length>0){
-        //     return this.chauffeurService.searchByString(searchString)
-        // }
         return this.chauffeurService.findMany(searchString,cursor,limit)
     }
 

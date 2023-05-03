@@ -62,6 +62,16 @@ model NotificationView {
   canal_vente_notifications canal_vente_notifications[]
 }
 
+model activity {
+  id                 Int      @id @default(autoincrement())
+  collaborateur_name String
+  action             String
+  object             Int
+  createdAt          DateTime @default(now())
+
+  @@fulltext([collaborateur_name, action])
+}
+
 model admin {
   id         Int          @id @default(autoincrement())
   login      String       @db.VarChar(255)
@@ -349,8 +359,6 @@ model avis {
   @@index([client_id], map: "IDX_8F91ABF019EB6921")
   @@index([course_id], map: "IDX_8F91ABF0591CC992")
   @@index([chauffeur_id], map: "IDX_8F91ABF085C0B3BE")
-
-
   @@fulltext([commentaire, id_review_product_avis_verifie, commentaire_commande, id_review_site_avis_verifie])
 }
 
@@ -430,7 +438,6 @@ model canal_vente {
   @@index([business_owner], map: "IDX_EB12956AB18101C3")
   @@index([macro_canal], map: "IDX_EB12956AE2FCA47B")
   @@index([rules_id], map: "IDX_EB12956AFB699244")
-
   @@fulltext([code, name, business_unit])
 }
 
@@ -673,7 +680,6 @@ model chauffeur {
   @@index([adresse_arrivee], map: "IDX_5CA777B8E84B9E8B")
   @@index([societe_id], map: "IDX_5CA777B8FCF77503")
   @@index([phone], map: "search_index")
-
   @@fulltext([lastname, firstname, login, phone, code, device_info, role])
 }
 
@@ -886,9 +892,9 @@ model collaborateur {
   is_admin                                           Boolean                       @default(false)
   tentative                                          Int                           @default(0)
   is_businessOwner                                   Boolean                       @default(false)
-  role                                               Role?
   collab_type                                        collaborateur_collab_type?
   collab_profile                                     collaborateur_collab_profile?
+  role                                               collaborateur_role?
   administ_status_flow                               administ_status_flow[]
   assembly                                           assembly[]
   auth_token                                         auth_token[]
@@ -1219,7 +1225,7 @@ model course {
   @@index([dropoff_start], map: "dropOffStart_idx")
   @@index([factures], map: "factures_idx")
 
-  @@fulltext([code, observation, factures, course_source, vehicule_type, nom_societe, tracking_number, receipt_number, failure_reason, driver_comment, secret_code, delivery_related, tour, note_interne, observation_arrivee, point_enlevement])
+  // @@fulltext([code, observation, factures, course_source, vehicule_type, tracking_number, receipt_number, failure_reason, driver_comment, note_interne, point_enlevement, motif_annulation, motif_annulation_client])
 }
 
 model course_administratif_status {
@@ -2465,25 +2471,6 @@ model zones_chauffeurs {
   course_creneau_log         course_creneau_log[]
 }
 
-model activity {
-  id                 Int      @id @default(autoincrement())
-  collaborateur_name String
-  action             String
-  object             Int
-  createdAt          DateTime @default(now())
-
-  @@fulltext([collaborateur_name, action])
-}
-
-enum Role {
-  res_course
-  res_canal_vente
-  res_client
-  res_chauffeur
-  res_avis
-  res_collaborateur
-}
-
 enum system_versioning_platform {
   android
   ios
@@ -2718,6 +2705,15 @@ enum collaborateur_collab_profile {
   Cariste_Genvillies   @map("Cariste Genvillies")
   Navette
   Transporteur_fluvial @map("Transporteur fluvial")
+}
+
+enum collaborateur_role {
+  res_course
+  res_canal_vente
+  res_client
+  res_chauffeur
+  res_avis
+  res_collaborateur
 }
 
 enum assembly_etat_paiement {
