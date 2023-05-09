@@ -29,7 +29,7 @@ export class ActivityRepository {
         })
 
         if(result.length===0){
-            throw new HttpException('No activity found!', HttpStatus.NOT_FOUND)
+            throw new HttpException('Aucune activité trouvée!', HttpStatus.NOT_FOUND)
         }
 
         return result

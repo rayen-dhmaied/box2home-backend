@@ -21,7 +21,7 @@ export class CourseController {
         return this.courseService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " created course #",
+                action : " a créé course #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -34,7 +34,7 @@ export class CourseController {
         return this.courseService.deleteOne(id).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " deleted course #",
+                action : " a supprimé course #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -47,7 +47,7 @@ export class CourseController {
         return this.courseService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " updated course #",
+                action : " a modifié course #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)

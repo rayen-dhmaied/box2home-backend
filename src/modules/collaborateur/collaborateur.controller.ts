@@ -21,7 +21,7 @@ export class CollaborateurController {
         return this.collaborateurService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " created collaborateur #",
+                action : " a créé collaborateur #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -38,7 +38,7 @@ export class CollaborateurController {
         return this.collaborateurService.deleteOne(id).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " deleted collaborateur #",
+                action : " a supprimé collaborateur #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -54,7 +54,7 @@ export class CollaborateurController {
         return this.collaborateurService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " updated collaborateur #",
+                action : " a modifié collaborateur #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)

@@ -21,7 +21,7 @@ export class CanalVenteController {
         return this.canalVenteService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " created canal de vente #",
+                action : " a créé canal de vente #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -34,7 +34,7 @@ export class CanalVenteController {
         return this.canalVenteService.deleteOne(id).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " deleted canal de vente #",
+                action : " a supprimé canal de vente #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -47,7 +47,7 @@ export class CanalVenteController {
         return this.canalVenteService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " updated canal de vente #",
+                action : " a modifié canal de vente #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)

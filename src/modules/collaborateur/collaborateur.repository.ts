@@ -50,7 +50,7 @@ export class CollaborateurRepository {
         })
 
         if(result.length===0){
-            throw new HttpException('Collaborateur not found!', HttpStatus.NOT_FOUND)
+            throw new HttpException('Collaborateur non trouvé!', HttpStatus.NOT_FOUND)
         }
 
         return { data : result, count: await this.prisma.collaborateur.count({...query})}

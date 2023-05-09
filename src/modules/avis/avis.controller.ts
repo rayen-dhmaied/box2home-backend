@@ -21,7 +21,7 @@ export class AvisController {
         return this.avisService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " created avis #",
+                action : " a créé avis #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -34,7 +34,7 @@ export class AvisController {
         return this.avisService.deleteOne(id).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " deleted avis #",
+                action : " a supprimé avis #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -47,7 +47,7 @@ export class AvisController {
         return this.avisService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " updated avis #",
+                action : " a modifié avis #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)

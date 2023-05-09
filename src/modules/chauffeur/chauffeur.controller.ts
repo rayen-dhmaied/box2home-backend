@@ -21,7 +21,7 @@ export class ChauffeurController {
         return this.chauffeurService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " created chauffeur #",
+                action : " a créé chauffeur #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -34,7 +34,7 @@ export class ChauffeurController {
         return this.chauffeurService.deleteOne(id).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " deleted chauffeur #",
+                action : " a supprimé chauffeur #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -47,7 +47,7 @@ export class ChauffeurController {
         return this.chauffeurService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " updated chauffeur #",
+                action : " a modifié chauffeur #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)

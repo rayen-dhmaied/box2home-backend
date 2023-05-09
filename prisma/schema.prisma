@@ -69,7 +69,7 @@ model activity {
   object             Int
   createdAt          DateTime @default(now())
 
-  @@fulltext([collaborateur_name, action])
+  @@fulltext([collaborateur_name,action])
 }
 
 model admin {
@@ -1181,7 +1181,7 @@ model course {
   prestation_canal_service                                         prestation_canal_service?    @relation(fields: [canal_prestation_service], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB96EEE9494")
   lettre_de_voiture                                                lettre_de_voiture?           @relation(fields: [lettre_voiture_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_169E6FB970FD261B")
   commande                                                         commande?                    @relation(fields: [commande_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_169E6FB982EA2E54")
-  chauffeur                                                        chauffeur?                   @relation(fields: [chauffeur_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "FK_169E6FB985C0B3BE")
+  chauffeur                                                        chauffeur?                   @relation(fields: [chauffeur_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "FK_169E6FB985C0B3BE")
   tarification_details                                             tarification_details?        @relation(fields: [tarification_details_id], references: [id], onUpdate: Restrict, map: "FK_169E6FB991BACDC5")
   contact_depart                                                   contact_depart?              @relation(fields: [contact_depart_id], references: [id], onUpdate: Restrict, map: "FK_169E6FB9C0F3DD30")
   adresse_enrichie_course_adresse_departToadresse_enrichie         adresse_enrichie?            @relation("course_adresse_departToadresse_enrichie", fields: [adresse_depart], references: [id], onUpdate: Restrict, map: "FK_169E6FB9D4EB6EE0")

@@ -7,22 +7,18 @@ export class CreateClientDto {
   @IsBoolean()
   enregistre: boolean;
   
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   login: string;
 
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   password: string;
 
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   firstname: string;
 
-  @IsOptional()
   @IsNotEmpty()
   @IsString()
   lastname: string;

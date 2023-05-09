@@ -78,7 +78,7 @@ export class AuthService {
             await this.mailerService.sendMail({
                 to:email,
                 from: process.env.FROM_EMAIL,
-                subject: 'Reset Your B2H Centrum Password',
+                subject: 'Réinitialiser votre mot de passe',
                 html : template({name : fetched_collaborateur.firstname, token})
             })
         }

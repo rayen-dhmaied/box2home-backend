@@ -21,7 +21,7 @@ export class ClientController {
         return this.clientService.createOne(record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " created client #",
+                action : " a créé client #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -34,7 +34,7 @@ export class ClientController {
         return this.clientService.deleteOne(id).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " deleted client #",
+                action : " a supprimé client #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
@@ -47,7 +47,7 @@ export class ClientController {
         return this.clientService.updateOne(id,record).then((data)=>{
             const activity= {
                 object : data.id,
-                action : " updated client #",
+                action : " a modifié client #",
                 collaborateur_id : req.user.id
             }
             this.activityService.createOne(activity)
