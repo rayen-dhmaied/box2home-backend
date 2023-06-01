@@ -2714,6 +2714,7 @@ enum collaborateur_role {
   res_chauffeur
   res_avis
   res_collaborateur
+  res_commande
 }
 
 enum assembly_etat_paiement {

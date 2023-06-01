@@ -8,6 +8,7 @@ import { CanalVenteModule } from './modules/canalVente/canalVente.module';
 import { ChauffeurModule } from './modules/chauffeur/chauffeur.module';
 import { CourseModule } from './modules/course/course.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { CommandeModule } from './modules/commande/commande.module';
 
 @Module({
     imports : [
@@ -19,6 +20,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         CourseModule, 
         ActivityModule, 
         AuthModule,
+        CommandeModule,
         MailerModule.forRoot({
             transport: {
               host: process.env.STMP_HOST ?? '',
