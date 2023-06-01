@@ -9,9 +9,14 @@ import { ChauffeurModule } from './modules/chauffeur/chauffeur.module';
 import { CourseModule } from './modules/course/course.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CommandeModule } from './modules/commande/commande.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
     imports : [
+        ServeStaticModule.forRoot({
+        rootPath: join(__dirname, '..', 'build'),
+        }),
         AvisModule, 
         CollaborateurModule, 
         ClientModule, 
