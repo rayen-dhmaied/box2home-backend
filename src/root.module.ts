@@ -9,10 +9,12 @@ import { ChauffeurModule } from './modules/chauffeur/chauffeur.module';
 import { CourseModule } from './modules/course/course.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CommandeModule } from './modules/commande/commande.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
     imports : [
-        AvisModule, 
+        AvisModule,
+        AnalyticsModule, 
         CollaborateurModule, 
         ClientModule, 
         CanalVenteModule, 
@@ -21,6 +23,7 @@ import { CommandeModule } from './modules/commande/commande.module';
         ActivityModule, 
         AuthModule,
         CommandeModule,
+
         MailerModule.forRoot({
             transport: {
               host: process.env.STMP_HOST ?? '',
