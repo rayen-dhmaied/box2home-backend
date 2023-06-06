@@ -9,26 +9,18 @@ import { ChauffeurModule } from './modules/chauffeur/chauffeur.module';
 import { CourseModule } from './modules/course/course.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { CommandeModule } from './modules/commande/commande.module';
-<<<<<<< HEAD
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
-
 @Module({
     imports : [
         ConfigModule.forRoot(),
         ServeStaticModule.forRoot({
-        rootPath: join(__dirname, '..', 'build'),
+        rootPath: join(__dirname, '..', 'build')
         }),
-        AvisModule, 
-=======
-import { AnalyticsModule } from './modules/analytics/analytics.module';
-
-@Module({
-    imports : [
-        AvisModule,
         AnalyticsModule, 
->>>>>>> feat/analytics
+        AvisModule, 
         CollaborateurModule, 
         ClientModule, 
         CanalVenteModule, 
