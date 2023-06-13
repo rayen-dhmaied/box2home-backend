@@ -1,4 +1,4 @@
-import { IsOptional, IsNotEmpty, IsNumber, IsString, IsDateString } from 'class-validator';
+import { IsOptional, IsNotEmpty, IsNumber, IsString, IsDateString, Max, Min } from 'class-validator';
 
 export class CreateAvisDto {
  
@@ -14,6 +14,8 @@ export class CreateAvisDto {
 
   @IsNotEmpty()
   @IsNumber()
+  @Max(5)
+  @Min(0)
   nombre_etoile: number;
 
   @IsOptional()

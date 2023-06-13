@@ -888,7 +888,7 @@ model collaborateur {
   embauche_date                                      DateTime?                     @db.DateTime(0)
   photo_identity                                     String?                       @db.LongText
   timezone                                           String                        @default("Europe/Paris") @db.VarChar(255)
-  deleted_at                                         DateTime?                     @db.DateTime(0)
+  last_time_logged                                   DateTime?                     @db.DateTime(0)
   is_admin                                           Boolean                       @default(false)
   tentative                                          Int                           @default(0)
   is_businessOwner                                   Boolean                       @default(false)
@@ -1225,7 +1225,7 @@ model course {
   @@index([dropoff_start], map: "dropOffStart_idx")
   @@index([factures], map: "factures_idx")
 
-  // @@fulltext([code, observation, factures, course_source, vehicule_type, tracking_number, receipt_number, failure_reason, driver_comment, note_interne, point_enlevement, motif_annulation, motif_annulation_client])
+  @@fulltext([code, observation, factures, course_source, vehicule_type, tracking_number, receipt_number, failure_reason, driver_comment, note_interne, point_enlevement, motif_annulation, motif_annulation_client])
 }
 
 model course_administratif_status {

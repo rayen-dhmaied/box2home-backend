@@ -61,6 +61,7 @@ export class AuthService {
     async validateRole(user: any){
         const collaborateur = await this.collaborateur.findByID(user.id.toString())
         if (collaborateur.is_admin === user.is_admin && collaborateur.role === user.role){
+            this.collaborateur.updateOne(collaborateur.id.toString(), {last_time_logged : new Date().toISOString()})
             return true
         }
         throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED)
