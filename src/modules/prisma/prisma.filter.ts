@@ -21,7 +21,8 @@ export class PrismaFilter extends BaseExceptionFilter {
       }
       case 'P2002':{
         const status = HttpStatus.CONFLICT
-        const message = exception.message.replace(/\n/g, '');
+        let message = /this\.prisma\.(\w+)\./.exec(exception.message)[1];
+        message = message.charAt(0).toUpperCase() + message.slice(1) + " avec une contrainte unique existe déjà";
         res.status(status).json({
           statusCode: status,
           message: message,
@@ -30,7 +31,8 @@ export class PrismaFilter extends BaseExceptionFilter {
       }
       case 'P2025':{
         const status = HttpStatus.NOT_FOUND
-        const message = exception.message.replace(/\n/g, '');
+        let message = /this\.prisma\.(\w+)\./.exec(exception.message)[1];
+        message = message.charAt(0).toUpperCase() + message.slice(1) + " n'existe plus";
         res.status(status).json({
           statusCode: status,
           message: message,

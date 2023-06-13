@@ -47,9 +47,12 @@ export class CollaborateurController {
     }
 
     @Patch(':id')
-    updateOne(@Req() req: any, @Param('id') id: string, @Body() record: updateCollaborateurDto){
-        if(!req.user.is_admin && (record.is_admin || record.role) ){
+    async updateOne(@Req() req: any, @Param('id') id: string, @Body() record: updateCollaborateurDto){
+        if((!(await this.collaborateurService.findByID(req.user.id)).is_admin) && (record.is_admin  || record.role) ){
             throw new HttpException('Forbidden' , HttpStatus.FORBIDDEN)
+        }
+        if(record.role === ''){
+            record.role = null
         }
         return this.collaborateurService.updateOne(id,record).then((data)=>{
             const activity= {
