@@ -11,6 +11,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe())
   const { httpAdapter } = app.get(HttpAdapterHost)
   app.useGlobalFilters(new PrismaFilter(httpAdapter))
-  await app.listen(4000);
+  await app.listen(80);
 }
 bootstrap();
