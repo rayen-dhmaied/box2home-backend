@@ -61,7 +61,6 @@ export class updateCollaborateurDto {
     tentative: number;
 
     @IsOptional()
-    @IsNotEmpty()
     @IsString()
     role: string;
 

@@ -29,8 +29,8 @@ export class CommandeRepository {
         }
 
         if(typeof cursor === 'undefined' || isNaN(cursor)){
-            const default_cursor = await this.prisma.$queryRaw`SELECT MIN(id) FROM commande;`
-            cursor = {id :default_cursor[0]['MIN(id)']}
+            const default_cursor = await this.prisma.$queryRaw`SELECT MAX(id) FROM commande;`
+            cursor = {id :default_cursor[0]['MAX(id)']}
         }else{
             cursor = { id: cursor}
         }
@@ -42,7 +42,10 @@ export class CommandeRepository {
         const result =  await this.prisma.commande.findMany({
             ...query,
             take,
-            cursor
+            cursor,
+            orderBy: {
+                id: 'desc'
+            }
         })
 
         if(result.length===0){
