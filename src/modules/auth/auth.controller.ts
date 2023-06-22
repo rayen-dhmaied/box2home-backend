@@ -21,9 +21,7 @@ export class AuthController {
     }
 
     @Get()
-    validateTokenRole(@Req() req: any){
-        return this.authService.validateRole(req.user)
-    }
+    validateTokenRole(@Req() req: any){}
 
     @Post('reset-password')
     @Public()
